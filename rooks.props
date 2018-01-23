@@ -1,0 +1,17 @@
+x11 implies not x12 and not x13 and not x21 and not x31
+x12 implies not x11 and not x13 and not x22 and not x32
+x13 implies not x11 and not x12 and not x23 and not x33
+x21 implies not x22 and not x23 and not x11 and not x31
+x22 implies not x21 and not x23 and not x12 and not x32
+x23 implies not x21 and not x22 and not x13 and not x33
+x31 implies not x32 and not x33 and not x11 and not x21
+x32 implies not x31 and not x33 and not x12 and not x22
+x33 implies not x31 and not x32 and not x13 and not x23
+
+x11 or x12 or x13
+x21 or x22 or x23
+x31 or x32 or x33
+
+# x11 or x12 or x13 or x21 or x22 or x23 or x31 or x32 or x33
+
+x11

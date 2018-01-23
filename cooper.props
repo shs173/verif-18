@@ -1,0 +1,23 @@
+S or J or W
+
+S implies not J and not W
+J implies not S and not W
+W implies not S and not J
+
+not S implies TS
+not J implies TJ
+not W implies TW
+
+A implies C
+C implies A
+G implies C
+D implies not J
+
+TS implies A
+TS implies B
+TJ implies not C
+TJ implies D
+TW implies E
+TW implies G
+
+not S and not W and J
