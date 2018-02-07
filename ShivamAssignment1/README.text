@@ -1,0 +1,6 @@
+1) Create an input file "data.text". 2 sample data files (data4x4.text and data9x9.text) ares included for reference
+
+2) To run the script:
+	python input2output.py data4x4.text
+
+3) The output is displayed on the screen in a single line
