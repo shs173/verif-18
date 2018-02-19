@@ -1,0 +1,44 @@
+
+  read_blif - read a blif file
+     _________________________________________________________________
+
+   read_blif [-c] [-e <encoding_file_name>] [-h] [-v] <file_name>
+
+   Reads a file in blif format into VIS. All the synthesis-specific constructs
+   of blif are ignored. Internally the blif file is automatically translated
+   into an equivalent blif-mv file, which is then read in with read_blif_mv.
+   Note that, currently this command cannot read blif files which describe
+   mapped circuits. To get around this problem, please use SIS synthesis tool
+   to generate an ordinary blif file. Command options:
+
+   -c
+          Semi-canonicalize all the tables in each model. See the documentation
+          of [1]read_blif_mv for details.
+
+   -e <encoding_file_name>
+          If  set,  the  program  reads in a blif file using the encoding
+          information specified in the encoding_file_name. Only the current
+          hnode is altered in the process, and hence the read is incremental.
+          Typically the encoding file is written out by a write_blif operation.
+          Note that this option cannot be used if no file has been read in.
+          Internally, the encoding file is used in combination with the blif
+          file  to create a blif-mv file which is compatible with the I/O
+          interface of the current node.
+
+   -h
+          Print the command usage.
+
+   -v
+          If set, the program prints out all the unused variables in the blif
+          file.
+
+   <file_name>
+          Name of a blif file to be read in. This can be the output written by
+          SIS. in the blif file.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/read_blif_mvCmd.html

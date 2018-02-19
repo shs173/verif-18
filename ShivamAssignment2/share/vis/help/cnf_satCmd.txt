@@ -1,0 +1,24 @@
+
+  cnf_sat - Perform SAT solving with CNF input
+     _________________________________________________________________
+
+   cnf_sat [-h] [-a <assgined_filename>] [-f <output_filename>] [-t <timeout>]
+   [-v <verbose>] [-b] <cnf_filename>
+
+   Perform SAT solving with CirCUs after reading CNF file
+
+   -b
+   If the given CNF has small number of variables and clause then the BDD is
+   built from the CNF clauses. If the monolithic BDD is built then we can
+   conclude SAT or UNSAT, otherwise the normal SAT algorithm is invoked.
+
+   -t <timeOutPeriod>
+   Specify the time out period (in seconds) after which the command aborts. By
+   default this option is set to infinity.
+
+   -f <output_filename>
+   Specify the output filename to save the satisfying assignments and the
+   statistics of SAT solving.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

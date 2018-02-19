@@ -1,0 +1,39 @@
+
+  print_network - print information about the flattened network
+     _________________________________________________________________
+
+   print_network [-f] [-h] [-t]
+
+   Prints the name of the flattened network, and information about each node.
+   For each node, prints the following:
+
+     name: the name of the node
+
+     mdd: MDD id (-1 is uninitialized)
+
+     type: one of combinational, primary-input, pseudo-input, latch, or shadow
+
+     derived attributes: list of derived attributes of the node
+
+   See the ntk documentation for more information on types and attributes. The
+   following is an example describing information associated with a node.
+  small.latch_in: mdd=2, combinational; data-input comb-output
+  
+
+   The flattened name of the node is "small.latch_in", its MDD id is 2, it is
+   of  type  combinational, and it is both a data input to a latch, and a
+   combinational output.
+
+   Command options:
+
+   -f
+          Print the fanins and fanouts of each node.
+
+   -h
+          Print the command usage.
+
+   -t
+          Print table statistics for those nodes having tables.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

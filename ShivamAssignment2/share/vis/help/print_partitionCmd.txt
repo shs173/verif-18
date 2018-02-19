@@ -1,0 +1,28 @@
+
+  print_partition - print the "dot" format describing the partition graph
+     _________________________________________________________________
+
+   print_partition [-h] <file>
+
+   Write a file in the format taken by the tool dot. Dot is a tool that, given
+   a description of a graph in a certain format, produces a postscript print of
+   the    graph.    For    more    information    about   dot   look   in
+   [1]http://www.research.att.com/sw/tools/graphviz.
+
+   If no argument is specified on the command line, the output is written to
+   the standard output.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   <file>
+          Name of file where the partition is to be written in "dot" format.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. http://www.research.att.com/sw/tools/graphviz

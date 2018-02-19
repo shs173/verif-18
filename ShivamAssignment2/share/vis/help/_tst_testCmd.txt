@@ -1,0 +1,19 @@
+
+  _tst_test - template for implementing commands
+     _________________________________________________________________
+
+   _tst_test [-h] [-v]
+
+   This command does nothing useful. It merely serves as a template for the
+   implementation of new commands.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -v
+   Verbose mode.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

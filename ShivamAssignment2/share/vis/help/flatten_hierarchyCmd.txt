@@ -1,0 +1,87 @@
+
+  flatten_hierarchy - create a flattened network
+     _________________________________________________________________
+
+   flatten_hierarchy [-a <file>] [-b] [-h] [-s] [-v #]
+
+   Creates a flattened network from a hierarchical description. The flattened
+   network  encompasses everything from the current node of the hierarchy
+   (reached by the command cd), down to and including the leaves. It creates a
+   view  with  the  hierarchy  removed, but retains the multi-level logic
+   structure. The resulting flattened network is stored with the current node.
+   Every table in the flattened network is checked whether it is completely
+   specified and deterministic. This is the starting point for verification
+   related commands.
+
+   A limited form of abstraction can be done by providing a list of variables
+   to treat as primary inputs. See the information under <file> below.
+
+   The verification part of VIS requires the functions specified by the BLIF-MV
+   tables to be completely specified and deterministic. These conditions are
+   checked  during  the  flattening  process; if a table is found that is
+   incompletely specified or is nondeterministic, then an error message is
+   written and a flattened network is not created. The exception to this rule
+   is tables specifying "pseudo inputs"; these are tables with no inputs, and a
+   single output that can take more than one value. Such tables are generated
+   by vl2mv to model the "$ND" construct in Verilog.
+
+   If  this  command  is invoked a second time from the same point in the
+   hierarchy, the previous network is deleted and a new one is created. This is
+   the  tactic to follow if you want to change some aspect of the current
+   network, such as MDD variable ordering or image_method.
+
+   Command options:
+
+   -a <file>
+          A file containing names of variables, used to specify which variables
+          to abstract. The name of a variable is the full hierarchical path
+          name, starting from just after the current hierarchy node (i.e., if
+          the current node is foo, and you want to refer to variable x in foo,
+          then just use x). A variable should appear at most once in the file.
+          Each variable name should appear at the beginning of a new line, with
+          no white space preceding it. The end of a variable name is marked by
+          white space, and any other text on the rest of the line is ignored.
+          Any line starting with "#" or white space is ignored. A sample file
+          is shown here.
+
+  # variables to abstract to model check liveness property
+  choosing0 
+  p0.pc     
+  
+
+          For each variable x appearing in the file, a new primary input node
+          named x$ABS is created to drive all the nodes that were previously
+          driven by x. Hence, the node x will not have any fanouts; however, x
+          and its transitive fanins will remain in the network.
+
+          Abstracting a net effectively allows it to take any value in its
+          range, at every clock cycle. This mechanism can be used to perform
+          manual abstractions. The variables to abstract should not affect the
+          correctness of the property being checked. This usually simplifies
+          the network, and permits some verification tasks to complete that
+          would not otherwise. Note, however, that by increasing the behavior
+          of the system, false negatives are possible when checking universal
+          properties,  and  false  positives  are  possible when checking
+          existential properties.
+
+          A convenient way of generating the hierarchical variable names is by
+          using the write_order command. Note that abstracting next state
+          variables has no effect.
+
+   -b
+          This option has no effect any longer.
+
+   -h
+          Print the command usage.
+
+   -s
+          Do not perform a sweep.
+
+   -v #
+          Print debug information.
+          0: (default) Nothing is printed out.
+
+          >= 2: Prints the variables read from the input file.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

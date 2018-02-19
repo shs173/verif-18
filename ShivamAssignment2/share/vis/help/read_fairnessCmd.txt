@@ -1,0 +1,51 @@
+
+  read_fairness - read a fairness constraint
+     _________________________________________________________________
+
+   read_fairness [-h] <file>
+
+   Read a fairness constraint, and associate this constraint with the FSM of
+   the flattened network. An existing constraint associated with the FSM is
+   lost. Subsequent verification procedures are performed relative to the new
+   constraint. Note that, by default, the flattened network has the constraint
+   TRUE, indicating that all paths are fair. The command build_partition_mdds
+   (or init_verify) must have already been invoked on the flattened network,
+   before this command is called.
+
+   Currently, only Buchi constraints are supported. A Buchi fairness constraint
+   is given by a list of individual Buchi conditions, B1, B2, ..., Bk, where Bi
+   is a set of FSM states. A state is fair if there exists an infinite path
+   from that state that intersects each Bi infinitely often.
+
+   The conditions are specified by a file containing at least one CTL formula
+   (see the [1]VIS CTL and LTL syntax manual). In particular, Bi is defined by
+   a CTL formula, which represents the set of states that makes the formula
+   true (in the absence of any fairness constraint). References to signal names
+   in the network should be made using the full hierarchical names. Note that
+   the support of any wire referred to in a formula should consist only of
+   latches. Each CTL formula is terminated by a semicolon.
+
+   Example: In the three conditions below, B1 contains those states that have a
+   next state where cntr.out is RED, B2 contains those where timer.active is 1,
+   and  B3  contains those states for which every path from the state has
+   tlc.request=1 until tlc.acknowledge=1.
+
+  EX(cntr.out=RED);
+  (timer.active=1);
+  A(tlc.request=1 U tlc.acknowledge=1);
+
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   <file>
+          File containing the set of Buchi conditions.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/ctl/ctl/ctl.html

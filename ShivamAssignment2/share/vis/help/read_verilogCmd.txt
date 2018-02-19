@@ -1,0 +1,31 @@
+
+  read_verilog - read a verilog file
+     _________________________________________________________________
+
+   read_verilog [-c] [-h] [-u] [-F] <file_name>
+
+   Reads a verilog file into VIS. Internally the file is transformed into an
+   equivalent blif-mv file, which is then read into VIS. The existing hierarchy
+   for the blif-mv file previously read in is overwritten upon a successful
+   read. If an error is detected while reading a file, the previous hierarchy
+   is preserved.
+
+   Command options:
+
+   -c
+          Use explicit clocking.
+
+   -h
+          Print the command usage.
+
+   -u
+          Turn off loop unroling.
+
+   -F
+          Ignore all timing.
+
+   <file_name>
+          Verilog file to be read in.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

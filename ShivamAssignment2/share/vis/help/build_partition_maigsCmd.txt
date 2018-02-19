@@ -1,0 +1,23 @@
+
+  build_partition_maigs - build a partition of MAIGs for the flattened network
+     _________________________________________________________________
+
+   build_partition_maigs [-h] [-d] [-n]
+
+   Build the multi-valued AND/INVERTER graph (MAIG) of a flattened network. It
+   builds  the  MAIG  for the combinational outputs (COs) in terms of the
+   combinational inputs (CIs). The pointer to this graph is stored in the
+   network to be used by other commands, such as bounded_model_check. This
+   command must be preceded by the commands flatten_hierarchy. This command
+   will remove any previous build to this graph.
+
+   Command options:
+
+   -n
+          Disable BDD sweeping.
+
+   -d
+          Build aig structure in depth first manner.
+            __________________________________________________________
+
+          Last updated on 20120205 22h07

@@ -1,0 +1,22 @@
+
+  _ntm_test - test the ntm package
+     _________________________________________________________________
+
+   _ntm_test [-h] [-v]
+
+   Test  the  ntm  package.  This package is responsible for building the
+   multi-valued functions (represented as MDDs) of the flattened network. This
+   command builds the multi-valued functions of the combinational outputs in
+   terms of the combinational inputs. The multi-valued functions are then
+   deleted.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -v
+          Print the sizes of the MDDs built.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

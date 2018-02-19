@@ -1,0 +1,17 @@
+
+  test_network_acyclic - determine whether the network is acyclic
+     _________________________________________________________________
+
+   test_network_acyclic [-h]
+
+   If the flattened network has a combinational cycle, then prints information
+   about one of the cycles. If no cycles are present, then it prints a message
+   to this effect.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,21 @@
+
+  print_bdd_stats - print the BDD statistics for the flattened network
+     _________________________________________________________________
+
+   print_bdd_stats [-h]
+
+   Print the BDD statistics for the flattened network. The MDDs representing
+   the functions of the network are themselves represented by BDDs via an
+   encoding of the multi-valued variables into binary valued variables. The
+   statistics given by this command depend on the underlying BDD package with
+   which VIS was linked. To get more information about the statistics, consult
+   the documentation for the given BDD package. The commands flatten_hierarchy
+   and static_order must be invoked before this command.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

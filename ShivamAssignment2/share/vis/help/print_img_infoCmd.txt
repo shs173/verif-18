@@ -1,0 +1,27 @@
+
+  print_img_info - print information about the image method currently in use
+     _________________________________________________________________
+
+   print_img_info [-b] [-f] [-h]
+
+   Prints information about the image computation method currently being used
+   by the FSM. This includes the particular values of parameters used by the
+   method for initialization. If the image information does not exist, then
+   this command forces the information to be computed. If none of the flags (-b
+   or -f) is set, forward transition relation is computed.
+
+   Command options:
+
+   -b
+          Compute the transition relation for backward image computation (if
+          needed).
+
+   -f
+          Compute the transition relation for forward image computation (if
+          needed).
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,3 @@
+#!/bin/bash
+export VIS_LIBRARY_PATH=$PWD/share/vis
+export PATH=$PATH:.

@@ -1,0 +1,26 @@
+
+  write_smv - write an smv file
+     _________________________________________________________________
+
+   write_smv [-h] [<file>]
+
+   Writes out the hierarchy below the current node in smv format to the file
+   specified  as  an argument. If no argument is specified, the output is
+   available at the standard output.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   <file>
+          name of smv file to be written.
+
+   For more information on smv, refer to the [1]smv manual.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. http://www-2.cs.cmu.edu/~modelcheck/smv.html

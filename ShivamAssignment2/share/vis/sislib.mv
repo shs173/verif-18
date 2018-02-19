@@ -1,0 +1,311 @@
+.model __sis_not
+.outputs o
+.inputs a
+.table a -> o
+.default 0
+0 1
+.end
+
+.model __sis_buf
+.outputs o
+.inputs a
+.table a -> o
+.default 1
+0 0
+.end
+
+.model __sis_and
+.outputs o
+.inputs a b
+.table a b -> o
+.default 0
+1 1 1
+.end
+
+.model __sis_and3
+.outputs o
+.inputs a b c
+.table a b c -> o
+.default 0
+1 1 1 1
+.end
+
+.model __sis_and4
+.outputs o
+.inputs a b c d
+.table a b c d -> o
+.default 0
+1 1 1 1 1
+.end
+
+.model __sis_and5
+.outputs o
+.inputs a b c d e
+.table a b c d e -> o
+.default 0
+1 1 1 1 1 1
+.end
+
+.model __sis_and6
+.outputs o
+.inputs a b c d e f
+.table a b c d e f -> o
+.default 0
+1 1 1 1 1 1 1
+.end
+
+.model __sis_and7
+.outputs o
+.inputs a b c d e f g
+.table a b c d e f g -> o
+.default 0
+1 1 1 1 1 1 1 1
+.end
+
+.model __sis_and8
+.outputs o
+.inputs a b c d e f g h
+.table a b c d e f g h -> o
+.default 0
+1 1 1 1 1 1 1 1 1
+.end
+
+.model __sis_and9
+.outputs o
+.inputs a b c d e f g h i
+.table a b c d e f g h i -> o
+.default 0
+1 1 1 1 1 1 1 1 1 1
+.end
+
+.model __sis_nand
+.outputs o
+.inputs a b
+.table a b -> o
+.default 1
+1 1 0
+.end
+
+.model __sis_nand3
+.outputs o
+.inputs a b c
+.table a b c -> o
+.default 1
+1 1 1 0
+.end
+
+.model __sis_nand4
+.outputs o
+.inputs a b c d
+.table a b c d -> o
+.default 1
+1 1 1 1 0
+.end
+
+.model __sis_nand5
+.outputs o
+.inputs a b c d e
+.table a b c d e -> o
+.default 1
+1 1 1 1 1 0
+.end
+
+.model __sis_nand6
+.outputs o
+.inputs a b c d e f
+.table a b c d e f -> o
+.default 1
+1 1 1 1 1 1 0
+.end
+
+.model __sis_nand7
+.outputs o
+.inputs a b c d e f g
+.table a b c d e f g -> o
+.default 1
+1 1 1 1 1 1 1 0
+.end
+
+.model __sis_nand8
+.outputs o
+.inputs a b c d e f g h
+.table a b c d e f g h -> o
+.default 1
+1 1 1 1 1 1 1 1 0
+.end
+
+.model __sis_nand9
+.outputs o
+.inputs a b c d e f g h i
+.table a b c d e f g h i -> o
+.default 1
+1 1 1 1 1 1 1 1 1 0
+.end
+
+.model __sis_or
+.outputs o
+.inputs a b
+.table a b -> o
+.default 1
+0 0 0
+.end
+
+.model __sis_or3
+.outputs o
+.inputs a b c
+.table a b c -> o
+.default 1
+0 0 0 0
+.end
+
+.model __sis_or4
+.outputs o
+.inputs a b c d
+.table a b c d -> o
+.default 1
+0 0 0 0 0
+.end
+
+.model __sis_or5
+.outputs o
+.inputs a b c d e
+.table a b c d e -> o
+.default 1
+0 0 0 0 0 0
+.end
+
+.model __sis_or6
+.outputs o
+.inputs a b c d e f
+.table a b c d e f -> o
+.default 1
+0 0 0 0 0 0 0
+.end
+
+.model __sis_or7
+.outputs o
+.inputs a b c d e f g
+.table a b c d e f g -> o
+.default 1
+0 0 0 0 0 0 0 0
+.end
+
+.model __sis_or8
+.outputs o
+.inputs a b c d e f g h
+.table a b c d e f g h -> o
+.default 1
+0 0 0 0 0 0 0 0 0
+.end
+
+.model __sis_or9
+.outputs o
+.inputs a b c d e f g h i
+.table a b c d e f g h i -> o
+.default 1
+0 0 0 0 0 0 0 0 0 0
+.end
+
+.model __sis_nor
+.outputs o
+.inputs a b
+.table a b -> o
+.default 0
+0 0 1
+.end
+
+.model __sis_nor3
+.outputs o
+.inputs a b c
+.table a b c -> o
+.default 0
+0 0 0 1
+.end
+
+.model __sis_nor4
+.outputs o
+.inputs a b c d
+.table a b c d -> o
+.default 0
+0 0 0 0 1
+.end
+
+.model __sis_nor5
+.outputs o
+.inputs a b c d e
+.table a b c d e -> o
+.default 0
+0 0 0 0 0 1
+.end
+
+.model __sis_nor6
+.outputs o
+.inputs a b c d e f
+.table a b c d e f -> o
+.default 0
+0 0 0 0 0 0 1
+.end
+
+.model __sis_nor7
+.outputs o
+.inputs a b c d e f g
+.table a b c d e f g -> o
+.default 0
+0 0 0 0 0 0 0 1
+.end
+
+.model __sis_nor8
+.outputs o
+.inputs a b c d e f g h
+.table a b c d e f g h -> o
+.default 0
+0 0 0 0 0 0 0 0 1
+.end
+
+.model __sis_nor9
+.outputs o
+.inputs a b c d e f g h i
+.table a b c d e f g h i -> o
+.default 0
+0 0 0 0 0 0 0 0 0 1
+.end
+
+.model __sis_xor
+.outputs o
+.inputs a b
+.table a b -> o
+.default 0
+0 1 1
+1 0 1
+.end
+
+.model __sis_xor3
+.outputs o
+.inputs a b c
+.table a b c -> o
+.default 0
+0 0 1 1
+0 1 0 1
+1 0 0 1
+1 1 1 1
+.end
+
+.model __sis_xnor
+.outputs o
+.inputs a b
+.table a b -> o
+.default 1
+0 1 0
+1 0 0
+.end
+
+.model __sis_xnor3
+.outputs o
+.inputs a b c
+.table a b c -> o
+.default 1
+0 0 1 0
+0 1 0 0
+1 0 0 0
+1 1 1 0
+.end

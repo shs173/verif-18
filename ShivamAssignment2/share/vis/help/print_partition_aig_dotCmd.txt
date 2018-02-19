@@ -1,0 +1,29 @@
+
+  print_partition_aig_dot - Print a dot description of the AND/INVERTER graph
+  that was built for the flattened network
+     _________________________________________________________________
+
+   print_partition_aig_dot [-h] <file_name>
+
+   Write a file in the format taken by the tool dot depicting the topology of
+   the AND/INVERTER graph. Dot is a tool that given a description of a graph in
+   a certain format it produces a postscript print of the graph. For more
+   information about dot look in
+   [1]http://www.research.att.com/orgs/ssr/book/reuse. Once a dot file is
+   produced with this command, the shell command dot -Tps >.ps will produce the
+   postscript file depicting the network.
+
+   If no argument is specified on the command line, the description is written
+   to the standard output.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. http://www.research.att.com/orgs/ssr/book/reuse

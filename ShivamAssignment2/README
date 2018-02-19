@@ -1,0 +1,23 @@
+Please type "source ./setup.scr" at the command prompt first to setup your
+work environment.
+
+All your Verilog source needs to be compiled using vl2mv first.  For example,
+compile adder64bit.v by typing "vl2mv adder64bit.v" at the command prompt. This
+will produce the file adder64bit.mv if your source Verilog is free of errors.
+
+Invoke Vis by typing "vis" at the command prompt, and follow the three command
+sequence shown below to establish equivalence/inequivalence between
+adder64bit.mv and adder64bitmodular.mv
+
+vis> read_blif_mv adder64bit.mv
+Warning: Some variables are unused in model adder64.
+vis> init_verify
+vis> comb_verify adder64bitmodular.mv
+Networks are combinationally equivalent.
+
+vis> quit
+
+The carry lookahead (CLA) adder that you need to design using non-behavioral
+primitives is adder64bitCLA.v -- the shell file is provided and there are few
+comments in the file to get you started.
+

@@ -1,0 +1,318 @@
+
+  print_tfm_options - print information about the transition function based
+  image computation options currently in use
+     _________________________________________________________________
+
+   print_tfm_options [-h] [-H]
+
+   Prints  information  about the current transition function based image
+   computation options.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -H
+          Print the transition function based image computation set command
+          usage.
+
+   Set parameters: The transition function based image computation options are
+   specified with the set command.
+
+   tfm_split_method <method>
+          Specify a splitting method.
+
+          method must be one of the following:
+
+          0 : input splitting (default)
+
+          1 : output splitting
+
+          2 : mixed (input split + output split)
+
+   tfm_input_split <method>
+          Specify an input splitting method.
+
+          method must be one of the following:
+
+          0 : support before splitting (default)
+
+          1 : support after splitting
+
+          2 : estimate BDD size after splitting
+
+          3 : top variable
+
+   tfm_pi_split_flag <method>
+          Specify whether to allow primary input variables to be chosen as a
+          splitting variable.
+
+          method must be one of the following:
+
+          yes : choose either state or input variable as splitting variable
+          (default)
+
+          no : choose only state variable as splitting variable
+
+   tfm_range_comp <method>
+          Specify a method whether to convert image to range computataion.
+
+          method must be one of the following:
+
+          0 : do not convert to range computation
+
+          1 : convert image to range computation (default)
+
+          2 : use a threshold (tfm_range_threshold, default for hybrid)
+
+   tfm_range_threshold <number>
+          This option is valid only when the tfm_range_comp is set to 2. This
+          threshold  is  used  to  determine  whether to convert to range
+          computation by comparing the shared BDD size of function vector after
+          constraining w.r.t. from set to its original size. If the size is
+          less than the origianl size * , then we convert to range computation.
+          The default value is 10.
+
+   tfm_range_try_threshold <number>
+          This option is valid only when the tfm_range_comp is set to 2. This
+          option is used to disable checking the condition if it fails to
+          convert consecutively times. The default value is 2.
+
+   tfm_range_check_reorder <method>
+          Specify  whether  to  force  to  call variable reordering after
+          constraining function vector w.r.t. from set and before checking the
+          condition.
+
+          method must be one of the following:
+
+          yes : force to reorder before checking tfm_range_threshold
+
+          no : do not reorder (default)
+
+   tfm_tie_break_mode <method>
+          Specify  a tie breaking method when we have a tie in choosing a
+          splitting variable in input and output splitting method.
+
+          method must be one of the following:
+
+          0 : the closest variable to top (default)
+
+          1 : the smallest BDD size after splitting
+
+   tfm_output_split <method>
+          Specify an output splitting method.
+
+          method must be one of the following:
+
+          0 : smallest BDD size (default)
+
+          1 : largest BDD size
+
+          2 : top variable
+
+   tfm_turn_depth <number>
+          This option is valid only when mixed or hybrid method is chosen. This
+          is used to determine when to switch to the other method at which
+          depth  of recursion. The default is 5 for tfm and -1 for hybrid
+          method.
+
+   tfm_find_decomp_var <method>
+          Specify a method whether to try to find a decomposable variable
+          (meaning articulation point) first if any.
+
+          method must be one of the following:
+
+          yes : try to find a decomposable variable (articulation point)
+
+          no : do not try (default)
+
+   tfm_sort_vector_flag <method>
+          Specify a method whether to sort function vectors to increase cache
+          performance.
+
+          method must be one of the following:
+
+          yes : sort function vectors (default for tfm)
+
+          no : do not sort (default for hybrid)
+
+   tfm_print_stats <method>
+          Specify a method whether to print statistics for cache and recursions
+          at the end of job.
+
+          method must be one of the following:
+
+          yes : print statistics
+
+          no : do not print (default)
+
+   tfm_print_bdd_size <method>
+          Specify a method whether to print the BDD size of all intermediate
+          product.
+
+          method must be one of the following:
+
+          yes : print BDD size
+
+          no : do not print (default)
+
+   tfm_split_cube_func <method>
+          Specify a method whether to try to find a cube in function vector in
+          input splitting, then perform output splitting once w.r.t. the cube.
+
+          method must be one of the following:
+
+          yes : try cube splitting
+
+          no : do not try (default)
+
+   tfm_find_essential <method>
+          Specify a method whether to try to find essential variables in from
+          set. If a variable occurs in all cubes of a BDD, the variable is
+          called essential. If exists, minimize both function vector and the
+          from set with the essential cube.
+
+          method must be one of the following:
+
+          0 : do not try (default)
+
+          1 : try to find essential variables
+
+          2 : on and off dynamically
+
+   tfm_print_essential <method>
+          Specify  a  method whether to print information about essential
+          variables.
+
+          method must be one of the following:
+
+          0 : do not print (default)
+
+          1 : print only at end
+
+          2 : print at every image computation
+
+   tfm_use_cache <method>
+          Specify whether to use an image cache.
+
+          method must be one of the following:
+
+          0 : do not use cache (default for hybrid)
+
+          1 : use cache (default)
+
+          2 : store all intermediate results
+
+   tfm_global_cache <method>
+          Specify a method whether to use one global image cache, or one image
+          cache per each machine.
+
+          method must be one of the following:
+
+          yes : use only one global cache (default)
+
+          no : use one cache per machine
+
+   tfm_max_chain_length <number>
+          This option is used to set the maximum number of items in a slot for
+          conflict. The default is 2.
+
+   tfm_init_cache_size <number>
+          This option is used to set the initial cache size. The number is
+          recommended to be a prime number. Currently, we do not resize the
+          cache size, but for the future extension, we named initial. The
+          default is 1001.
+
+   tfm_auto_flush_cache <method>
+          Specify a method to flush image cache.
+
+          method must be one of the following:
+
+          0 : flush cache only when requested
+
+          1 : flush cache at the end of image computation (default)
+
+          2 : flush cache before reordering
+
+   tfm_compose_intermediate_vars <method>
+          Specify a method whether to compose all intermediate variables.
+
+          method must be one of the following:
+
+          yes : compose all
+
+          no : do not compose (default)
+
+   tfm_pre_split_method <method>
+          Specify a splitting method for preimage computation.
+
+          method must be one of the following:
+
+          0 : input splitting (domain cofactoring, default)
+
+          1 : output splitting (constraint cofactoring)
+
+          2 : mixed (input split + output split)
+
+          3 : substitution
+
+   tfm_pre_input_split <method>
+          Specify an input splitting method for preimage computation.
+
+          method must be one of the following:
+
+          0 : support before splitting (default)
+
+          1 : support after splitting
+
+          2 : estimate BDD size after splitting
+
+          3 : top variable
+
+   tfm_pre_output_split <method>
+          Specify an output splitting method for preimage computation.
+
+          method must be one of the following:
+
+          0 : smallest BDD size (default)
+
+          1 : largest BDD size
+
+          2 : top variable
+
+   tfm_pre_dc_leaf_method <method>
+          Specify a method to switch to another method to complete preimage
+          computation in domain cofactoring method when no more splitting
+          variable exist.
+
+          method must be one of the following:
+
+          0 : substitution (default)
+
+          1 : constraint cofactoring
+
+          2 : hybrid
+
+   tfm_pre_minimize <method>
+          Specify a method whether to minimize transition function vector w.r.t
+          a chosen function in constraint cofactoring method. This option is
+          recommended to use when image cache is disabled, because even though
+          this option can minimize the BDD size of function vector, this may
+          degrade cache performance.
+
+          method must be one of the following:
+
+          yes : minimize function vector w.r.t. a chosen function in constraint
+          cofactoring
+
+          no : do not minimize (default)
+
+   tfm_verbosity <verbosity>
+          Specify the level of printing information related with transition
+          function method.
+
+          verbosity must be 0 - 2 (default = 0).
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

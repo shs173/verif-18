@@ -1,0 +1,85 @@
+
+  ltl_to_aut - translate LTL formulae into Buechi automata
+     _________________________________________________________________
+
+   ltl_to_aut  [-f  <ltl_file>]  [-m  <algorithm>] [-o <output_file>] [-t
+   <output_format>] [-w] [-b] [-p] [-d] [-r] [-i] [-M] [-v <verbosity>] [-h]
+
+   Translate  the given LTL formulae into Buechi automata, and output the
+   automaton into a file.
+
+   The   translation   algorithms  are  the  same  as  the  one  used  in
+   [1]ltl_model_check . However, more flexible combination of the options can
+   be used with this command.
+
+   The automaton can be displayed on the screen and written into a file. The
+   format of the output can be dot, blifmv, verilog and smv.
+
+   Command options:
+
+   -f <ltl_file>
+          The input file containing LTL formulae.
+
+   -m <algorithm>
+          Specify  the  algorithm used in LTL formula -> Buechi automaton
+          translation algorithm.
+
+          algorithm must be one of the following:
+
+          0: GPVW.
+
+          1: GPVW+.
+
+          2: LTL2AUT.
+
+          3: WRING (default).
+
+   -o <output_file>
+          Write the automata into this file.
+
+   -t <output_format>
+          Specify the output format of the automata.
+
+          output_format must be one of the following:
+
+          0: dot.
+
+          1: blif_mv.
+
+          2: verilog.
+
+          3: all of the formats above (default).
+
+   -w
+          Rewriting the formula before translation.
+
+   -b
+          Boolean minimization during the translation.
+
+   -p
+          Pruning the fair states in the Buechi automaton.
+
+   -d
+          Direct-simulation minimization of the Buechi automaton.
+
+   -r
+          Reverse-simulation minimization of the Buechi automaton.
+
+   -i
+          Minimization based ont the I/O structural information.
+
+   -M
+          Maximize (adding arcs to) Buechi automaton using Direct Simulation.
+
+   -v <verbosity_level>
+          Specify verbosity level. It must be one of the following: 0,1,2,3.
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/ltl_model_checkCmd.html

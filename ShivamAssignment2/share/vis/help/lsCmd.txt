@@ -1,0 +1,18 @@
+
+  ls - list all the child nodes at the current node
+     _________________________________________________________________
+
+   ls [-h] [-R]
+
+   Lists all the child nodes at the current node.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -R
+          Call ls recursively all the way down to leaves.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

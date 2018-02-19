@@ -1,0 +1,31 @@
+
+  set_bdd_parameters - Creates a table with the value of all the flags
+  currently active in VIS and calls the function bdd_set_parameters with the
+  manager of the current place in the hierarchy and the table.
+     _________________________________________________________________
+
+   set_bdd_parameters [-h][-s]
+
+   The command obtains the bdd manager of the current point in the hierarchy.
+   Given  this  manager  and the set of pairs (variable,value) of the VIS
+   environment, the function sets specific BDD parameters to the given values.
+   This command works in conjunction with print_bdd_stats.
+
+   Print_bdd_stats first prints a report of the parameters and statistics of
+   the current bdd_manager. By using the command "set", the user may modify the
+   value of any of the parameters of the underlying bdd package. The way to do
+   it is by setting a value in the variable BDD.parameter name where parameter
+   name is the name of the parameter exactly as printed by the print_bdd_stats
+   command. In order to "re-program" the underlying bdd package this command
+   must be invoked.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -s
+          Print the bdd parameter and statistics after the modification.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

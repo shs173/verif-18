@@ -1,0 +1,117 @@
+
+  spfd_pilo - Perform SPFD-based placement independent logic optimization.
+     _________________________________________________________________
+
+   spfd_pilo  [-a  <[0,1]>] [-D <depth>] [-f <file>] [-h] [-i <freq>] [-p
+   <percent>] [-r] [-S <n>] [-t <sec>] [-v <n>] [-w <file>]
+
+   This command performs SPFD-based wire removal/replacement and reprogramming
+   of combinational circuits mapped to LUT-based FPGAs to reduce the number of
+   wires  and  nodes in the circuit. The flexibilities in the circuit are
+   represented by SPFDs. The following references explain in detail the theory
+   behind SPFDs.
+
+   S. Yamashita, H. Sawada, and A. Nagoya. A new method to express functional
+   permissibilities for LUT based FPGAs and its applications. In International
+   Conference on Computer Aided Design, pages 254-261, 1996.
+
+   Subarnarekha Sinha and Robert K. Brayton. Implementation and use of SPFDs in
+   optimizaing Boolean networks. In International Conference on Computer Aided
+   Design, 1998.
+
+   Instead of computing the flexibilities for every node in the network at
+   once, the algorithm computes the flexibilities for one cluster at a time.
+   Working with clusters allows us to avoid the BDD explosion problem and
+   hence, handle large circuits. The SPFDs are computed for the cluster and the
+   cluster nodes are reprogrammed based on the flexibility derived. Switching
+   activity is used to drive the choice of alternate function to be implemented
+   at the node. In the absence of switching activity information, the function
+   that  can  reduce support of the node can be chosen (not implemented).
+   Currently, an arbitrary choice is made from the flexibilities provided by
+   SPFDs. (-S 0, -S 2, and -S 4)
+
+   Before calling this command a network should be created for the design (use
+   flatten_hierarchy) and MDD ids for every node in the network should be
+   created (static_order -o all -n append, for example). Dynamic variable
+   ordering (dvo -e sift) can be enabled to reduce BDD sizes.
+
+   Command options:
+
+   -a <alpha>
+          A convex combination of switched capacitance (switching activity *
+          fanout count, SWC) and topological depth is used to sort the fanin
+          nodes during SPFD computation. alpha is between 0 and 1.0. The cost
+          function is alpha*SWC + (1.0-alpha)*topDepth. The default value is
+          0.5.
+
+   -D <depth>
+          A cluster is computed which includes nodes within the specified
+          'depth'. The default value is 1.
+
+   -f <file>
+          File with simulation vectors. The file format is as below. The format
+          is simple but strict and hence, few checks are made.
+
+          .i c n d o e p f q g r h s i t j u k a l b m
+          .s
+          0 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 0 1 1 1 1 ;
+          0 1 1 0 0 0 0 1 0 1 1 0 1 1 1 1 0 0 0 0 1 ;
+          0 0 1 0 0 0 0 1 0 1 0 0 0 1 0 1 0 0 0 0 1 ;
+          0 1 1 0 0 0 0 1 1 1 1 1 1 1 1 1 0 1 0 0 1 ;
+          The .i statement specifies the primary inputs of the network. The
+          patterns start after .s key word. Each vector is a space separated
+          list of bits and ends in a semi-colon. The length of any vector
+          should  be  equal  to the number of signals specified in the .i
+          statement. A line starting with # is a comment.
+
+   -h
+          Print usage.
+
+   -i <freq>
+          Number of iterations after which to update node switching activity.
+          This  is valid only if patterns are provided in a file using -f
+          option. The default value is every 5 iterations.
+
+   -m <n>
+          Heuristics to optimize a selected node.
+          0: Reduce the selected node's support.
+          1: Reprogram the selected node.
+          2: Reprogram the selected node's fanin nodes. (default)
+          3: Reduce the selected node's fanout wires.
+
+   -p <percent>
+          The percentage of vectors, specified via -f option, used to perform
+          simulation (to update switching activity) during logic optimization.
+          The default value is 10%.
+
+   -r
+          Do not reprogram LUTs if no structural changes have been performed
+          with in the cluster, i.e., if no nodes or wires have been removed do
+          not  change  the local implementation of LUTs even if alternate
+          implementations are availabe from SPFD information. The default is to
+          reprogram.
+
+   -S <n>
+          Method used to sort nodes. The nodes are then optimized in that
+          order.
+          0: Random node is chosen. (default)
+          1: If switching activity is available, node with maximum SWC is
+          chosen.
+          2: Node with maximum fanout is chosen.
+          3: If switching activity is available, node with minimum SWC is
+          chosen.
+          4: Node with minimum fanout is chosen.
+
+   -t <sec>
+          Time in seconds allowed to complete the command. If the computation
+          time goes above that limit, the process is aborted. The default is no
+          limit.
+
+   -v <n>
+          Verbosity level. Default value is 0.
+
+   -w <file>
+          File to output final optimized circuit.
+            __________________________________________________________
+
+          Last updated on 20120205 22h07

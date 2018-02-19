@@ -1,0 +1,61 @@
+
+  print_guided_search_options - print information about guided_search_options
+  in use
+     _________________________________________________________________
+
+   print_guided_search_options [-h]
+
+   Prints information about current Guided Search options. Guided search is an
+   alternate method to compute fixpoints by modifying the fixpoint computation
+   with restrictions. It is applicable to the compute_reach, check_invariant
+   and model_check commands (refer to their help pages on the use of guided
+   search).  See  also for details: Ravi and Somenzi, Hints to accelerate
+   symbolic traversal. CHARME'99; Bloem, Ravi, and Somenzi, Efficient Decision
+   Procedures for Model Checking of Linear Time Logic Properties, CAV'99;
+   Bloem, Ravi, and Somenzi, Symbolic Guided Search for CTL Model Checking,
+   DAC'00. Not allowed with -A 2 or -i, and will only work with iwls95 or
+   monolithic image methods. The description of some options can be found in
+   the help page for set.
+
+   Command options:
+
+   guided_search_hint_type
+          Choose from local (default) or global. If this flag is set to local,
+          then every subformula is evaluated to completion, using all hints in
+          order, before the next subformula is started. For pure ACTL or pure
+          ECTL formulae, we can also set guided_search_hint_type to global, in
+          which case the entire formula is evaluated for one hint before moving
+          on to the next hint, using underapproximations.
+
+   guided_search_underapprox_minimize_method
+          Choose from "constrain" and "and" (default). Sets the method with
+          which the transition relation is minimized when underapproximations
+          are used. The option constrain is incompatible with hints that use
+          signals other than inputs.
+
+   guided_search_overapprox_minimize_method
+          Choose from "squeeze" and "ornot" (default). Sets the method with
+          which the transition relation is minimized when underapproximations
+          are used. The option squeeze is incompatible with hints that use
+          signals other than inputs. Ornot implies that the transition relation
+          will be disjoined with the negation of the hint: T' = T + ~h, whereas
+          squeeze will find a small BDD between T and T'.
+
+   guided_search_sequence
+          For compute_reach and check_invariant only. Set this flag to a list
+          of comma-separated integers i1,i2,...,in, with n at most the number
+          of  hints  that you specify . The k'th hint will be used for ik
+          iterations (images). A value of 0 causes the hint to be applied to
+          convergence. Not setting this option is like setting it to 0,0,...,0.
+          If length of the specified sequence is less than the number of hints,
+          the sequence is padded with zeroes.
+
+   Guided search also uses the High Density traversal options that are germane
+   to dead-ends. The relevant flags are hd_dead_end, hd_dead_end_approx_method,
+   hd_frontier_approx_threshold,hd_approx_quality,hd_approx_bias_quality.Use
+   help on the print_hd_options command for explanation of these flags. If
+   guided search is used with HD using the -A 1 options in compute_reach and
+   check_invariant, the HD options are used by both HD and guided search.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

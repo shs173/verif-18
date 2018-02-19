@@ -1,0 +1,283 @@
+
+  print_hybrid_options - print information about the hybrid image computation
+  options currently in use
+     _________________________________________________________________
+
+   print_hybrid_options [-h] [-H]
+
+   Prints information about the current hybrid image computation options.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -H
+          Print the hybrid image computation set command usage.
+
+   Set parameters: The hybrid image computation options are specified with the
+   set command.
+
+   hybrid_mode <mode>
+          Specify a mode how to start hybrid computation.
+
+          mode must be one of the following:
+
+          0 : start with only transition function and build transition relation
+          on demand
+
+          1 : start with both transition function and relation (default)
+
+          2 : start with only transition relation. Only this mode can deal with
+          nondeterminism.
+
+   hybrid_tr_split_method <method>
+          Specify a method to choose a splitting variable in hybrid mode = 2.
+
+          method must be one of the following:
+
+          0 : use support (default)
+
+          1 : use estimate BDD size
+
+   hybrid_build_partial_tr <method>
+          Specify whether to build full or partial transition relation in
+          hybrid mode = 2. This option is used to use less memory. When we use
+          partial  transition relation, for the variables excluded in the
+          transition relation, we build each bit transition relation on demand.
+          When nondeterminism exists in the circuit, this can not be used.
+          method must be one of the following:
+
+          yes : build partial transition relation
+
+          no : build full transition relation (default)
+
+   hybrid_partial_num_vars <number>
+          Specify how many variables are going to be excluded in building
+          partial transition relation. The default is 8.
+
+   hybrid_partial_method <method>
+          Specify a method to choose variables to be excluded in building
+          partial transition relation.
+
+          method must be one of the following:
+
+          0 : use BDD size (default)
+
+          1 : use support
+
+   hybrid_delayed_split <method>
+          Specify a method whether to split transition relation immediately or
+          just all at once before AndExist.
+
+          method must be one of the following:
+
+          yes : apply splitting to transition relation at once
+
+          no : do not apply (default)
+
+   hybrid_split_min_depth <number>
+          Specify the minimum depth to apply dynamic hybrid method. If a depth
+          is smaller than this minimum depth, just split. The default is 1.
+
+   hybrid_split_max_depth <number>
+          Specify the maximum depth to apply dynamic hybrid method. If a depth
+          is bigger than this maximum depth, just conjoin. The default is 5.
+
+   hybrid_pre_split_min_depth <number>
+          Specify the minimum depth to apply dynamic hybrid method in preimage
+          computation. If a depth is smaller than this minimum depth, just
+          split. The default is 0.
+
+   hybrid_pre_split_max_depth <number>
+          Specify the maximum depth to apply dynamic hybrid method in preimage
+          computation. If a depth is bigger than this maximum depth, just
+          conjoin. The default is 4.
+
+   hybrid_lambda_threshold <number>
+          Specify a threshold in floating between 0.0 and 1.0 to determine to
+          split or to conjoin after computing variable lifetime lambda for
+          image computation. If lambda is equal or smaller than this threshold,
+          we conjoin. Otherwise we split. The default is 0.6
+
+   hybrid_pre_lambda_threshold <number>
+          Specify a threshold in floating between 0.0 and 1.0 to determine to
+          split or to conjoin after computing variable lifetime lambda for
+          preimage  computation.  If lambda is equal or smaller than this
+          threshold, we conjoin. Otherwise we split. The default is 0.65
+
+   hybrid_conjoin_vector_size <number>
+          If the number of components in transition function vector is equal or
+          smaller than this threshold, we just conjoin. This check is performed
+          before computing lambda. The default is 10.
+
+   hybrid_conjoin_relation_size <number>
+          If the number of clusters in transition relation is equal or smaller
+          than this threshold, we just conjoin. This check is performed before
+          computing lambda. The default is 2.
+
+   hybrid_conjoin_relation_bdd_size <number>
+          If the shared BDD size of transition relation is equal or smaller
+          than this threshold, we conjoin. This check is performed before
+          computing lambda. The default is 200.
+
+   hybrid_improve_lambda <number>
+          When variable lifetime lambda is bigger than lambda threshold, if the
+          difference between previous and current lambda is equal or smaller
+          than this threshold, then we conjoin. The default is 0.1.
+
+   hybrid_improve_vector_size <number>
+          When variable lifetime lambda is bigger than lambda threshold, if the
+          difference between the previous and current number of components in
+          transition function vector is equal or smaller than this threshold,
+          then we conjoin. The default is 3.
+
+   hybrid_improve_vector_bdd_size <number>
+          When variable lifetime lambda is bigger than lambda threshold, if the
+          difference  between the previous and current shared BDD size of
+          transition function vector is equal or smaller than this threshold,
+          then we conjoin. The default is 30.0.
+
+   hybrid_decide_mode <method>
+          Specify a method to decide whether to split or to conjoin.
+
+          method must be one of the following:
+
+          0 : use only lambda
+
+          1 : use lambda and also special checks to conjoin
+
+          2 : use lambda and also improvement
+
+          3 : use all (default)
+
+   hybrid_reorder_with_from <method>
+          Specify a method to reorder transition relation to conjoin in image
+          computation, whether to include from set in the computation.
+
+          method must be one of the following:
+
+          yes : reorder relation array with from to conjoin (default)
+
+          no : reorder relation array without from to conjoin
+
+   hybrid_pre_reorder_with_from <method>
+          Specify  a  method to reorder transition relation to conjoin in
+          preimage computation, whether to include from set in the computation.
+
+          method must be one of the following:
+
+          yes : reorder relation array with from to conjoin
+
+          no : reorder relation array without from to conjoin (default)
+
+   hybrid_lambda_mode <method>
+          Specify a method to decide which variable lifetime to be used for
+          image computation.
+
+          method must be one of the following:
+
+          0 : total lifetime with ps/pi variables (default)
+
+          1 : active lifetime with ps/pi variables
+
+          2 : total lifetime with ps/ns/pi variables
+
+   hybrid_pre_lambda_mode <method>
+          Specify a method to decide which variable lifetime to be used for
+          preimage computation.
+
+          method must be one of the following:
+
+          0 : total lifetime with ns/pi variables
+
+          1 : active lifetime with ps/pi variables
+
+          2 : total lifetime with ps/ns/pi variables (default)
+
+          3 : total lifetime with ps/pi variables
+
+   hybrid_lambda_with_from <method>
+          Specify a method to compute variable lifetime lambda, whether to
+          include from set in the computation.
+
+          method must be one of the following:
+
+          yes : include from set in lambda computation (default)
+
+          no : do not include
+
+   hybrid_lambda_with_tr <method>
+          Specify a method to compute variable lifetime lambda, whether to use
+          transition relation or transition function vector, when both exist.
+
+          method must be one of the following:
+
+          yes : use transition relation (default)
+
+          no : use transition function vector
+
+   hybrid_lambda_with_clustering <method>
+          Specify a method whether to include clustering to compute variable
+          lifetime lambda.
+
+          method must be one of the following:
+
+          yes : compute lambda after clustering
+
+          no : do not cluster (default)
+
+   hybrid_synchronize_tr <method>
+          Specify a method to keep transition relation. This option is only for
+          when hybrid mode is 1.
+
+          method must be one of the following:
+
+          yes : rebuild transition relation from function vector whenever the
+          function vector changes
+
+          no : do not rebuild (default)
+
+   hybrid_img_keep_pi <method>
+          Specify a method to build forward transition relation.
+
+          method must be one of the following:
+
+          yes  :  keep  all primary input variables in forward transition
+          relation.
+
+          no : quantify out local primary input variables from the transition
+          relation. (default)
+
+   hybrid_pre_keep_pi <method>
+          Specify a method to build backward transition relation.
+
+          method must be one of the following:
+
+          yes  :  keep all primary input variables in backward transition
+          relation and preimages.
+
+          no : quantify out local primary input variables from the transition
+          relation. (default)
+
+   hybrid_pre_canonical <method>
+          Specify a method whether to canonicalize the function vector for
+          preimage computation.
+
+          method must be one of the following:
+
+          yes : canonicalize the function vector
+
+          no : do not canonicalize (default)
+
+   hybrid_tr_method lt;methodgt;
+          Specify an image method for AndExist operation in hybrid method.
+
+          method must be one of the following:
+
+          iwls95 (default)
+
+          mlp
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

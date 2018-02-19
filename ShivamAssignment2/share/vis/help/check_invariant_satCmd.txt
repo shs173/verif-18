@@ -1,0 +1,34 @@
+
+  check_invariant_sat - Check invariant property using sat based unmounded
+  model checking
+     _________________________________________________________________
+
+   check_invariant_sat  [-h]  [-d] [-t <timeOutPeriod>] [-m <method>] [-v
+   <verbosity_level>] <inv_file>
+
+   Perform  SAT-based unbounded model checking on And-Inverter-Graph. The
+   command compute fixed point of AG using AX operation. AX is implemented
+   using AllSAT enumeration algorithm. Command options:
+
+   -d
+          Disable inclusion test on initial states.
+
+   -v <verbosity_level>
+          Specify verbosity level. This sets the amount of feedback on CPU
+          usage and code status.
+
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   -m <method>
+          Specify the method for AllSAT algorithm.
+
+   -h
+          Print the command usage.
+
+   <inv_file>
+   File containing Invariant formulae to be checked.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

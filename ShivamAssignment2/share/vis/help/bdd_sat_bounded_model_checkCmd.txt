@@ -1,0 +1,91 @@
+
+  bdd_sat_bounded_model_check - performs an LTL bounded model checking on a
+  flattened network
+     _________________________________________________________________
+
+   bdd_sat_bounded_model_check [-h] [-v <verbosity_level>] [-d <dbg_level>]
+   [-i] -m <minimum_length> -k <maximum_length> -s <step_value> -o <cnf_file>
+   <ltl_file>
+
+   Performs an LTL bounded model checking on a flattened network. This command
+   looks for a counterexample of length ≥ minimum_length and ≤ maximum_length.
+   It increments the length by step_value. Before calling this command, the
+   user  should  have  initialized  the  design  by  calling  the command
+   [1]flatten_hierarchy, and then calling the command [2]build_partition_maigs.
+
+   The value of maximum length must be >= minimum length.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -m <minimum_length>
+          Minimum length of counterexample to be checked (default is 0).
+
+   -k <maximum_length>
+          Maximum length of counterexample to be checked (default is 1).
+
+   -s <step_value>
+          Incrementing value of counterexample length (default is 1).
+
+   -r <inductive_Step>
+          Use inductive proof at each step_value to check if the property
+          passes (default is 0). 0 means don't use the inductive proof. BMC
+          will check using the indcution if the property passes if the current
+          length of the counterexample is a multiple of inductive_Step.
+
+   -F <fairness_file>
+          Read fairness constraints from <fairness_file>. Each formula in the
+          file is a condition that must hold infinitely often on a fair path.
+
+   -o <cnf_file> Save the CNF formula in <cnf_file>
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   -v <verbosity_level>
+          Specify verbosity level. This sets the amount of feedback on CPU
+          usage and code status.
+          verbosity_level must be one of the following:
+
+          0: No feedback provided. This is the default.
+
+          1: Feedback on code location.
+
+          2: Feedback on code location and CPU usage.
+
+   -d <dbg_level>
+          Specify the amount of debugging performed when the BMC models check
+          the LTL formula.
+
+          dbg_level must be one of the following:
+
+          0: No debugging performed. dbg_level=0 is the default.
+
+          1: Debugging with minimal output: generate counter-example if the LTL
+          formula fails and the counterexample length.
+
+   -h
+          Print the command usage.
+
+   -i
+          Print  input  values  causing transitions between states during
+          debugging.
+
+   -o <cnf_file>;
+          File containing CNF of the counterexample if exist. If specifies, the
+          user can exam this file looking for information about the generated
+          path. This file will be the input to the SAT solver. The contents of
+          this file is in dimacs format.
+
+   <ltl_file>
+          File containing LTL formulas to be model checked.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/flatten_hierarchyCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_maigsCmd.html

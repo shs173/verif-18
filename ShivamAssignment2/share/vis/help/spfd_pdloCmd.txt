@@ -1,0 +1,162 @@
+
+  spfd_pdlo - Perform SPFD-based simultaneous placement and logic optimization.
+     _________________________________________________________________
+
+   spfd_pdlo [-D <depth>] [-h] [-n <file>] [-r] [-t <sec>] [-v <n>] [-w <file>]
+   net_file arch_file place_file route_file
+
+   This command performs SPFD-based combined logic and placement optimization
+   of combinational circuits mapped to LUT-based FPGAs to improve circuit area
+   and speed. The flexibilities in the circuit are represented by SPFDs. The
+   following references explain in detail the theory behind SPFDs.
+
+   S. Yamashita, H. Sawada, and A. Nagoya. A new method to express functional
+   permissibilities for LUT based FPGAs and its applications. In International
+   Conference on Computer Aided Design, pages 254-261, 1996.
+
+   Subarnarekha Sinha and Robert K. Brayton. Implementation and use of SPFDs in
+   optimizaing Boolean networks. In International Conference on Computer Aided
+   Design, 1998.
+
+   The  command  implements  a technique that tightly links the logic and
+   placement optimization steps. The algorithm is based on simulated annealing.
+   Two types of moves, directed towards global reduction in the cost function
+   (total wire length), are accepted by the simulated annealing algorithm: (1)
+   wire removal/replacement, and (2) swapping of a pair of blocks in the FPGA.
+   Feedback from placement is valuable in making an informed choice of a target
+   wire during logic optimization moves. The logic optimization steps performed
+   are similar to those of spfd_pilo, except that the placement information is
+   now used instead of the fanout count. More information on this technique can
+   be found in :
+
+   Balakrishna Kumthekar and Fabio Somenzi. Power and delay reduction via
+   simultaneous  logic  and  placement  optimization in FPGAs. In Design,
+   Automation and Test in Europe, 2000.
+
+   The command produces a placement file which is used by VPR for routing.
+
+   This command can be used only if VIS is linked with VPR 4.22 (Versatile
+   Place and Route), the FPGA place and route tool [1]VPR, from the University
+   of Toronto. Please follow the instructions provided in the release notes to
+   use VPR with VIS. You can also contact kumtheka@avanticorp.com if you need
+   more help.
+
+   Before calling this command a network should be created for the design (use
+   flatten_hierarchy) and MDD ids for every node in the network should be
+   created (static_order -o all -n append). Dynamic variable ordering (dvo -e
+   sift) can be enabled to reduce BDD sizes.
+
+   Command options:
+
+   -D <depth>
+          A cluster is computed which includes nodes within the specified
+          'depth'. The default value is 1.
+
+   -n <file>
+          File to output the optimized circuit in VPR's .net format.
+
+   -r
+          Do not reprogram LUTs if no structural changes have been performed
+          with in the cluster, i.e., if no nodes or wires have been removed do
+          not  change  the local implementation of LUTs even if alternate
+          implementations are availabe from SPFD information. The default is to
+          reprogram.
+
+   -t <sec>
+          Time in seconds allowed to complete the command. If the computation
+          time goes above that limit, the process is is aborted. The default is
+          no limit.
+
+   -v <n>
+          Verbosity level.
+
+   -w <file>
+          File to output final optimized circuit.
+
+   The following is needed by VPR:
+
+   net_file
+          The description of the circuit in the .net format. Logic optimization
+          uses the circuit described in .BLIF format whereas VPR needs the same
+          circuit  described in .net format. VPack (which comes with VPR)
+          converts a .BLIF format into a .net format.
+
+   arch_file
+          Architecture description file for FPGAs. More information can be
+          found in VPR's manual.
+
+   place_file
+          File to dump placement information.
+
+   route_file
+          File to dump routing information.
+
+          Relevant flags to be set by the set command:
+
+        spfd_pdlo_logic_move_freq "r1 m1 r2 m2 ..."
+                Perform m1 logic moves whenever the rate of acceptance during
+                simulated annealing is greater than or equal to r1, and so on.
+                r1, r2, r3 ... should be monotonically decreasing, else the
+                results would be unpredictable. 0 <= ri <= 1.0. For example:
+
+                set spfd_pdlo_logic_move_freq "0.8 0 0.5 5 0.2 10"
+
+                In the above logic schedule, zero logic moves per temperature
+                will be performed when the rate of acceptance is above 0.8, 5
+                logic moves between 0.8 and 0.5, 10 moves between 0.5 and 0.2.
+                As no value is specified for acceptance rate close to 0.0, by
+                default, 1 logic move per temperature will be performed. In
+                this example it will be 1 logic move between 0.2 and 0.0. The
+                quotes around the schedule are necessary.
+
+        spfd_repl_rem
+                If no, the logic optimization performs only wire removal. If
+                yes, both wire replacement and removal are performed.
+
+        spfd_pdlo_timing
+                If set, use timing driven method to remove or replace wires on
+                the critical path. If not set, use bounding box of the wires as
+                the cost function.
+
+        spfd_pdlo_timing_nodeorwire
+                Remove/replace all the wires belonging to the most critical
+                net.  If not set, attempt to remove/replace only the most
+                critical wire.
+
+        spfd_pdlo_out_crit_nets_first
+                Output the circuit in VPR's .net format with the nets appearing
+                in the increasing order of their slack. If not set, the initial
+                net order specified in the original circuit's .net file is
+                used. The file is specified with -n option. This variable is
+                valid only if spfd_pdlo_timing is set.
+
+        spfd_pdlo_remap_clb_array
+                During logic optimization, due to the removal of nodes in the
+                network, the current size of FPGA might be bigger than it is
+                necessary. In such cases, if this variable is set, the size of
+                the FPGA is reduced to fit the current logic network.
+
+          Relevant flags that are options to VPR:
+
+          For detailed information on the following options please refer to the
+          manual that accompanies VPR source distribution.
+
+        vpr_nodisp
+        vpr_fix_pins
+        vpr_nx
+        vpr_ny
+        vpr_fast
+        vpr_init_t
+        vpr_alpha_t
+        vpr_exit_t
+        vpr_inner_num
+        vpr_seet
+        vpr_place_cost_exp
+        vpr_place_chan_width
+            __________________________________________________________
+
+          Last updated on 20120205 22h07
+
+References
+
+   1. http://www.eecg.toronto.edu/~vaughn/vpr/vpr.html

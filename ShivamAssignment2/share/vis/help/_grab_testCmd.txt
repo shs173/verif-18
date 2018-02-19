@@ -1,0 +1,115 @@
+
+  _grab_test - Performs invairant checking on a flattened network with the GRAB
+  abstraction refinement algorithm.
+     _________________________________________________________________
+
+   _grab_test [-a <refine_algorithm>] [-c <cex_type>] [-d <dbg_level>] [-F]
+   [-M] [-i] [-m] [-t <time_out_period>] [-v <verbosity_level>] [-f <dbg_file>]
+   [-h] <inv_file>
+
+   Performs invairant checking on a flattened network with the GRAB abstraction
+   refinement algorithm. Before calling this command, the user should have
+   created the flattened netowrk by calling the commands [1]flatten_hierarchy
+   and [2]build_partition_maigs. The default BDD manager and network partition
+   are not mandatory for calling this command, though they will be used if
+   available.  (In other words, the user doesn't have to run the commands
+   [3]static_order and [4]build_partition_mdds before calling this command.)
+   Regardless of the options, no 'false positive' or 'false negatives' will
+   occurs: the result is correct for the given model. Properties to be verified
+   should be provided as invariant formulae in the file inv_file. Node that the
+   support of any wire referred to in a formula should consist only of latches.
+   For the precise syntax of CTL and LTL formulas, see the [5]VIS CTL and LTL
+   syntax manual.
+
+   If  a  formula  does  not  pass,  a proof of failure (referred to as a
+   counter-example) is demonstrated. Whether demostrate the proof or not can be
+   specified (see option -d).
+
+   Command options:
+
+   -a <refine_algorithm>
+          Specify the refinement variable selection algorithm.
+
+          refine_algorithm must be one of the following:
+
+          GRAB: the GRAB refinement method (Default).
+
+   -c <cex_type>
+          Specify the type of abstract counter-examples used in the analysis.
+
+          cex_type must be one of the following:
+
+          0: minterm state counter-example.
+
+          1: cube state counter-example.
+
+          2: synchronous onion rings (Default).
+
+   -d <dbg_level>
+          Specify whether to demonstrate a counter-example when the system
+          fails a formula being checked.
+
+          dbg_level must be one of the following:
+
+          0: No debugging performed. dbg_level=0 is the default.
+
+          1: Generate a counter-example (a path to a fair cycle).
+
+   -F <finegrain_flag>
+          Enable or disable the use of fine-grain abstraction.
+
+          finegrain_flag must be one of the following:
+
+          0: disable fine-grain abstraction.
+
+          1: enable fine-grain abstraction (Default).
+
+   -M <refinemin_flag>
+          Enable or disable the use of greedy refinement minimization.
+
+          refinemin_flag must be one of the following:
+
+          0: disable greedy refinement minimization.
+
+          1: enable greedy refinement minimization (Default).
+
+   -i
+          Print  input  values  causing transitions between states during
+          debugging. Both primary and pseudo inputs are printed.
+
+   -m
+          Pipe debugger output through the UNIX utility more.
+
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   -v <verbosity_level>
+          Specify verbosity level. This sets the amount of feedback on CPU
+          usage and code status.
+          verbosity_level must be one of the following:
+
+          0: No feedback provided. This is the default.
+
+          1: Feedback on code location.
+
+          2: Feedback on code location and CPU usage.
+
+   -f <dbg_out>
+          Specify the name of the file ot which error trace is written.
+
+   -h
+          Print the command usage.
+
+          See also commands : model_check, check_invariant
+            __________________________________________________________
+
+          Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/flatten_hierarchyCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_maigsCmd.html
+   3. file://localhost/projects/development/hsv/vis/common/doc/html/static_orderCmd.html
+   4. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_mddsCmd.html
+   5. file://localhost/projects/development/hsv/vis/common/doc/ctl/ctl/ctl.html

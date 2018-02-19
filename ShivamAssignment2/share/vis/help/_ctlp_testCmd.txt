@@ -1,0 +1,29 @@
+
+  _ctlp_test - test the CTL parser
+     _________________________________________________________________
+
+   _ctlp_test [-h] <file_name>
+
+   Test the CTL parser. If the entire file of CTL formulas is successfully
+   parsed, then each formula is printed to stdout, followed by the equivalent
+   existential normal form formula. The formulas read are not stored. For the
+   input file containing:
+ AG(foo=bar); 
+
+   the following is produced:
+ original
+  formula: AG(foo=bar) => equivalent existential formula: !(E(TRUE U
+  !(foo=bar))) 
+
+   For the syntax of CTL formulas, refer to [1]the VIS CTL and LTL syntax
+   manual. Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/ctl/ctl/ctl.html

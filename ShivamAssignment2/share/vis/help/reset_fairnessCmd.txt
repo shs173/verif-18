@@ -1,0 +1,17 @@
+
+  reset_fairness - reset the fairness constraint
+     _________________________________________________________________
+
+   reset_fairness [-h]
+
+   Remove any existing fairness constraint associated with the FSM of the
+   flattened network, and impose a single constraint, TRUE, indicating that all
+   states are "accepting".
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

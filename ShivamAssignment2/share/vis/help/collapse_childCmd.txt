@@ -1,0 +1,41 @@
+
+  collapse_child - Collapses a parent (which is the current node) and a given
+  child node into the parent
+     _________________________________________________________________
+
+   collapse_child [-h] [-v] <child_instance_name>
+
+   This command collapses the given child into the current node. After this
+   command, the number of children of the current node will decrease by one.
+   The variables in the child node will be renamed to reflect their original
+   name.  For  example, if the current node is named "foo" and it has two
+   children, "bar1" and "bar2", then after
+
+   collapse_child bar1
+
+   is executed, the name of any variable occuring in bar1, say "xvar" will be
+   renamed "bar1$xvar". The new parent will have only the single child "bar2"
+   (which can be seen by typing "ls").
+
+   The user can use "cd" to traverse a hierarchy, go to a particular node. When
+   the  user uses "write_blif" from a particular node, vis will write the
+   circuit in this node out. However, the user might want to do synthesis on
+   the entire circuit in the hierarchy. In that case, the hierarchy can be
+   collapsed into a single node, by repeatedly using this command.
+
+   Examples:
+
+   collapse_child P1
+
+   Collapse P1 into the current node.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -v
+   Verbose mode.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

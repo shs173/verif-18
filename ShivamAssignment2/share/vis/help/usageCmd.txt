@@ -1,0 +1,16 @@
+
+  usage - provide a dump of process statistics
+     _________________________________________________________________
+
+   usage [-h]
+
+   Prints a formatted dump of processor-specific usage statistics. For Berkeley
+   Unix, this includes all of the information in the getrusage() structure.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

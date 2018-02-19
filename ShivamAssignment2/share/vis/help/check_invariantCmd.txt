@@ -1,0 +1,262 @@
+
+  check_invariant - check all states reachable in flattened network satisfy
+  specified invariants
+     _________________________________________________________________
+
+   check_invariant [-c] [-d <dbg_level>] [-g <hints_file>] [-f] [-h] [-i] [-m]
+   [-r]     [-t    <time_out_period>]    [-v    <verbosity_level>]    [-A
+   <reachability_analysis_type>] [-D] <invar_file>
+
+   Performs invariant checking on a flattened network. Before calling this
+   command, the user should have initialized the design by calling the command
+   [1]init_verify.
+
+   If the option -A3 (abstraction refinement method GRAB) is used, the command
+   [2]build_partition_maigs should also have been executed. However, in this
+   case, the default BDD manager and network partition are not mandatory,
+   though they will be used if available. (In other words, the user must run
+   the commands [3]flatten_hierarchy and [4]build_partition_maigs, but doesn't
+   have to run the commands [5]static_order and [6]build_partition_mdds before
+   calling  this  command.)  For extremely large networks, it is actually
+   favorable not to build them for the entire concrete model, but let this
+   procedure assign bdd ids and construct the partition incrementally.
+
+   Option -A4 means abstraction refinement approach using puresat algorithm,
+   which is entirely based on SAT solver.
+
+   An invariant is a set of states. Checking the invariant is the process of
+   determining that all states reachable from the initial states lie in the
+   invariant.
+
+   One way of defining an invariant is through a CTL formula which has no path
+   operators. Such formulas should be specified in the file invar_file. Note
+   that the support of any wire referred to in a formula should consist only of
+   latches. For the precise syntax of CTL formulas, see the [7]VIS CTL and LTL
+   syntax manual.
+
+   check_invariant ignores all fairness conditions associated with the FSM.
+
+   check_invariant involves reachability analysis where at every step of the
+   reachability computation all the specified invariants are checked in the
+   reachable states computed thus far. If some invariant does not hold, a proof
+   of failure is demonstrated. This consists of a path starting from an initial
+   state to a state lying outside the invariant. This path is made as short as
+   possible. For the -A 0 option or default -A option, it is the shortest path
+   leading  to  a  state outside the invariant. If a set of invariants is
+   specified, the failed formulas are reported as soon as they are detected.
+   The check is continued with the remaining invariants.
+
+   Command options:
+
+   -d <dbg_level>
+          Specify the amount of debugging performed when the system fails a
+          formula being checked.
+
+          dbg_level must be one of the following:
+
+          0 : No debugging performed. This is the default.
+
+          1 : Generate a path from an initial state to a state lying outside
+          the invariant. This option stores the onion rings just as specifying
+          -f would have. Therefore, it may take more time and memory if the
+          formula passes. This option is incompatible with -A 2 option.
+
+   -f
+          Store the set of new states (onion rings) reached at each step of
+          invariant. This option is likely to use more memory but possibly
+          faster  results  for invariants that fail. Therefore, the debug
+          information for a failed invariant, if requested, may be provided
+          faster. This option is not compatible with -A 2 options.
+
+   -g <hints_file>
+          Use guided search. The file hints_file contains a series of hints. A
+          hint is a formula that does not contain any temporal operators, so
+          hints_file has the same syntax as a file of invariants used for
+          check_invariant. The hints are used in the order given to change the
+          transition relation. The transition relation is conjoined with the
+          hint to yield an underapproximation of the transition relation. If
+          the hints are cleverly chosen, this may speed up the computation
+          considerably, because a search with the changed transition relation
+          may be much simpler than one with the original transition relation,
+          and results obtained can be reused, so that we may never have to do
+          an expensive search with the original relation. See also: Ravi and
+          Somenzi, Hints to accelerate symbolic traversal. CHARME'99; Bloem,
+          Ravi, and Somenzi, Efficient Decision Procedures for Model Checking
+          of Linear Time Logic Properties, CAV'99; Bloem, Ravi, and Somenzi,
+          Symbolic Guided Search for CTL Model Checking, DAC'00. This option is
+          not compatible with -A 2 option. The description of some options for
+          guided   search   can   be   found   in   the   help  page  for
+          print_guided_search_options.
+
+   -h
+          Print the command usage.
+
+   -c
+          Use the formula tree so that subformulae are not shared among the CTL
+          formulae in the input file. This option is useful in the following
+          scenario - formulae A, B and C are being checked in order and there
+          is sub-formula sharing between A and C. If the BDDs corresponding to
+          the shared sub-formula is huge then computation for B might not be
+          able to finish without using this option.
+
+   -i
+          Print  input  values  causing transitions between states during
+          debugging. Both primary and pseudo inputs are printed.
+
+   -m
+          Pipe debugger output through the UNIX utility more.
+
+   -r
+          Reduce the FSM derived from the flattened network with respect to
+          each of the invariants in the input file. By default, the FSM is
+          reduced with respect to the conjunction of the invariants in the
+          input file. If this option is used and don't cares are being used for
+          simplification, then subformula sharing is disabled (result might be
+          incorrect otherwise).
+
+          The truth of an invariant may be independant of parts of the network
+          (such as when wires have been abstracted; see [8]flatten_hierarchy).
+          These parts are effectively removed when this option is invoked; this
+          may result in more efficient invariant checking.
+
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   -v <verbosity_level>
+          Specify verbosity level. This sets the amount of feedback on CPU
+          usage and code status.
+
+          verbosity_level must be one of the following:
+
+          0 : No feedback provided. This is the default.
+
+          1 : Feedback on code location.
+
+          2 : Feedback on code location and CPU usage.
+
+   -A <reachability_analysis_type>
+          This  option  allows  specification of the type of reachability
+          computation.
+
+          0:  (default) Breadth First Search. No approximate reachability
+          computation.
+
+          1: High Density Reachability Analysis (HD). Computes reachable states
+          in a manner that keeps BDD sizes under control. May be faster than
+          BFS in some cases. For larger circuits, this option could compute
+          more  reachable states than the -A 0 option for the same memory
+          constraints, consequently may prove more invariants false. For help
+          on  controlling  options  for  HD, look up help on the command:
+          print_hd_options [9]print_hd_options. Refer Ravi & Somenzi, ICCAD95.
+          The path generated for a failed invariant using this method may not
+          be the shortest path. This option is available only when compiled
+          with the CUDD package.
+
+          2.   Approximate   Reachability   Don't  Cares(ARDC).  Computes
+          over-approximated reachable states in the reachability analysis step.
+          This may be faster than the -A 0 option . The invariants are checked
+          in the over-approximation. This may produce false negatives, but
+          these are resolved internally using the exact reachable states. The
+          final results produced are the same as those for exact reachable
+          states. For help on controlling options for ARDC, look up help on the
+          command: print_ardc_options. [10]print_ardc_options Refer 2 papers in
+          TCAD96 Dec. Cho et al, one is for State Space Decomposition and the
+          other is for Approximate FSM Traversal. This option is incompatible
+          with -d 1 and -g options.
+
+          3. The GRAB Abstraction Refinement Method. Conducts the reachability
+          analysis on an abstract model. If the invariants are true in the
+          abstract model, they are also true in the original model. If the
+          invariants are false, the abstract counter-examples are used to
+          refine the abstract model (since it is still inconclusive). This
+          procedure iterates until a conclusive result is reached. Note that,
+          with this option, "build_partitioned_mdds" and "static_order" does
+          not have to be executed before calling "check_invariants," though the
+          default BDD partition and order will be reused if available. (When
+          checking  extremely  large  models,  skipping  either  or  both
+          "static_order"  and "build_partitioned_mdds" can often make the
+          verification much faster.) The grainularity of abstraction refinement
+          also depends on the parameter "partition_threshold", which by default
+          is 5000; one can use the VIS command "set partition_threshold 1000"
+          to change its value. For experienced users who want to fine-tune the
+          different  parameters  of  GRAB,  please  try  the test command
+          "_grab_test" ("_grab_test -h" prints out its usage information).
+          Refer to Wang et al., ICCAD2003 and ICCD2004 for more information
+          about the GRAB algorithm. Note that this option is incompatible with
+          the "-d 1" and "-g" options.
+
+          4. Abstraction refinement approach using puresat algorithm, which is
+          entirely based on SAT solver. It has several parts: * Localization
+          base Abstraction * K-induction to prove the truth of a property *
+          Bounded Model Checking to find bugs * Incremental concretization
+          based methods to verify abstract bugs * UNSAT proof based method to
+          obtain refinement * Refinement minization to guarrantee a minimal
+          refinement For more information, please check the BMC'03 and STTT'05
+          paper of Li et al., "A satisfiability-based appraoch to abstraction
+          refinement in model checking", and " Abstraction in symbolic model
+          checking using satisfiability as the only decision procedure"
+
+   -D
+          First compute an overapproximation to the reachable states. Minimize
+          the transition relation using this approximation, and then compute
+          the set of reachable states exactly. This may accelerate reachability
+          analysis.  Refer  to  the paper by Moon et al, ICCAD98. The BDD
+          minimizing method can be chosen by using "set image_minimize_method "
+          [11]set. This option is incompatible with -g.
+
+   -F <dbg_file>
+          Write the debugger output to dbg_file.
+
+   -w <node_file> This option invokes the algorithm to generate an error trace
+          divided into fated and free segements. Fate represents the
+          inevitability and free is asserted when there is no inevitability.
+          This can be formulated as a two-player concurrent reachability game.
+          The two players are the environment and the system. The node_file is
+          given to specify the variables the are controlled by the system.
+
+   -W
+   This option represents the case that all input variables are controlled by
+          system.
+
+   -G
+   We proposed two algorithms to generate segmented counterexamples: general
+          and restricted. By default we use the restricted algorithm. We can
+          invoke the general algorithm with -G option. For more information,
+          please read the STTT'04 paper by Jin et al., "Fate and Free Will in
+          Error Traces"
+
+   <invarFile>
+          File containing invariants to be checked.
+
+   Related "set" options:
+
+   rch_simulate <#>
+   The set option can be used to set this flag rch_simulate to specify the
+   number of random vectors to be simulated. Default value for this number is
+   0.
+
+   ctl_change_bracket <yes/no>
+   Vl2mv automatically converts "[]" to "<>" in node names, therefore CTL
+   parser does the same thing. However, in some cases a user does not want to
+   change node names in CTL parsing. Then, use this set option by giving "no".
+   Default is "yes".
+
+   See also command : compute_reach
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/init_verifyCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_maigsCmd.html
+   3. file://localhost/projects/development/hsv/vis/common/doc/html/flatten_hierarchyCmd.html
+   4. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_maigsCmd.html
+   5. file://localhost/projects/development/hsv/vis/common/doc/html/static_orderCmd.html
+   6. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_mddsCmd.html
+   7. file://localhost/projects/development/hsv/vis/common/doc/ctl/ctl/ctl.html
+   8. file://localhost/projects/development/hsv/vis/common/doc/html/flatten_hierarchyCmd.html
+   9. file://localhost/projects/development/hsv/vis/common/doc/html/print_hd_optionsCmd.html
+  10. file://localhost/projects/development/hsv/vis/common/doc/html/print_ardc_optionsCmd.html
+  11. file://localhost/projects/development/hsv/vis/common/doc/html/setCmd.html

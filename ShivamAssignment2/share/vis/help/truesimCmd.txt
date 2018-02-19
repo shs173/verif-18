@@ -1,0 +1,81 @@
+
+  truesim - Simulate the flattened network
+     _________________________________________________________________
+
+   truesim [ -D <filename> ] [ -d ] [ -f <filename> ] [ -g <filename> ] [ -h ]
+   [ -n <N> ] [ -p <filename> ] [ -r <N> ] [ -t <time> ] [ -v <N> ]
+
+   Simulates  a  network with a set of input vectors. Before calling this
+   command,  the  user  should  create  a  partition  (using  the command
+   build_partition_mdds). The simulation vectors can be provided by the user
+   (using -f vectors_file), or generated randomly.
+
+   Command options:
+
+   -D <filename>
+          File to dump randomly generated vectors. Primary input probability
+          file SHOULD be specified with -p option.
+
+   -d
+          Perform event-driven true delay simulation. The fanout count of the
+          nodes is used as an estimate for the node delay. Primary inputs are
+          assumed to have arrival times of zero.
+
+   -f <filename>
+          File containing simulation vectors. The format is simple but strict
+          and hence, few checks are made. The file format is as below:
+
+          .i c n d o e p f q g r h s i t j u k a l b m
+          .s
+          0 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 0 1 1 1 1 ;
+          0 1 1 0 0 0 0 1 0 1 1 0 1 1 1 1 0 0 0 0 1 ;
+          0 0 1 0 0 0 0 1 0 1 0 0 0 1 0 1 0 0 0 0 1 ;
+          0 1 1 0 0 0 0 1 1 1 1 1 1 1 1 1 0 1 0 0 1 ;
+          The .i statement specifies the primary inputs of the network. The
+          patterns start after .s key word. Each vector is a space separated
+          list of bits and ends in a semi-colon. The length of any vector
+          should  be  equal  to the number of signals specified in the .i
+          statement. A line starting with # is a comment.
+
+   -g <filename>
+          File to output random probabilities for primary inputs. Use this
+          option ONLY to produce a vector of signal probabilities for primary
+          inputs. This option does not proceed with simulation.
+
+   -h
+          Print a help message that details all options.
+
+   -n <N>
+          Number of patterns to simulate. The default is 1000. Use this option
+          ONLY with -p option.
+
+   -p <filename>
+          File containing primary input probabilities. The format is as shown
+          below:
+
+          PI_Name1 0.67
+          PI_Name2 0.45
+
+   -r <N>
+          Print  PI/PO names after every N patterns simulated, for better
+          readability of simulation output. This option is effective only when
+          the verbosity flag is on.
+
+   -T <filename>
+          File containing node delay and load values. The file format is as
+          shown below:
+
+          node1 delay1 load1
+          node2 delay2 load2
+          The delay vaues are assumed as specified in a common unit. The same
+          is true for load values too.
+
+   -t <time>
+          Time in seconds allowed to finish the simulation. The default is no
+          limit.
+
+   -v <N>
+          Specify verbosity level, N.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

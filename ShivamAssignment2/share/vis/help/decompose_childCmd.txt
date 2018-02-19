@@ -1,0 +1,54 @@
+
+  decompose_child - Partitions Node components into child nodes.
+     _________________________________________________________________
+
+   decompose_child  -n  <groupname>  [-f  <filename>] [-c] [-v] [-t] [-l]
+   [<components>]
+
+   This command partitions the current Node into several new children nodes
+   according to user-specified groups. The user may specify several groups by
+   name [-n] sequentially on the command line. Within each group a list of
+   components (either variables or child nodes) can be placed. The flags [-c]
+   [-v] toggle whether element names are interpreted as child instances or
+   variables (default is instances [-c]). Element names can be loaded from a
+   file as well using the [-f] flag.
+
+   By specifying a variable to be grouped, any object (e.g., Table, Latch,
+   Child) that PRODUCES that variable is included in the newly created child
+   node for that group.
+
+   Command options:
+
+   -n <groupname>
+          Define new group
+
+   -f <filename>
+          Load names from file
+
+   -c
+          Interpret names that follow as child instances to group
+
+   -v
+   Interpret names that follow as variables
+
+   -l
+   Include all latch output nodes (and therefore latches) in group
+
+   -t
+   Include all combinational tables in group. Examples:
+
+   decompose_child -n c1 -v G1 G2 -n c2 IA IB
+
+   Place variables G1 and G2 into a new child node c1 and child nodes IA and IB
+   into a new child node c2.
+
+   Example:
+
+   decompose_child -n ckt_inst child1 -f myinstances -v var1 -n latch_inst -l
+
+   This groups the subckts child1 and those listed in the file myinstances, as
+   well as the variable var1 into a subckt called 'ckt_inst'. It also groups
+   all the latches into a subckt called 'latch_inst'.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

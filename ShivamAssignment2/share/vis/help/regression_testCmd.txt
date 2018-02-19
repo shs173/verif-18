@@ -1,0 +1,345 @@
+
+  regression_test - perform regression test with the information given in
+  arguments file
+     _________________________________________________________________
+
+   regression_test [-s <script_file_name>]
+
+   Invokes two set of execution of vis to compare the performance and to check
+   sanity of each execution. Then make a set of tables summarizing results,
+   such as CPU sec, memoty usage and fail/pass of model_check, etc.. This
+   command will read a description of the regression test to be performed from
+   the argument file, which is configuartion file. Besides the configuration
+   file, one needs to prepare two template files and a design list. We now
+   describe these in turn. As running example we shall use a regression test
+   that compares check_invariant with and without guided search.
+
+   The configuration file for our example is shown below, delimited by lines of
+   dashes (which are not part of the file). The order in which the lines appear
+   in the file is immaterial. A line beginning with '#' is a comment, and is
+   ignored by regression_test.
+   ----------------------------------------------------------------------
+   DesignDirectory : /projects/development/hsv/vis/Regression
+   DesignList : ./DesignListInv
+   ReferenceVis : /usr/local/vis/i686-o/vis-cu
+   ReferenceVisNickName : BFS
+   ReferenceOutputDir : ./result_inv_bfs
+   RefCommandTemplate : ./TemplateRefInv
+   bRefRun : FALSE
+   NewVis : /usr/local/vis/i686-o/vis-cu
+   NewVisNickName : GS
+   NewOutputDir : ./result_inv_gs
+   bNewRun : FALSE
+   NewCommandTemplate : ./TemplateNewInv
+   bCompareCounterExample : TRUE
+   bDefaultInitCommand : FALSE
+   ResultForPerformance : ./BFSvsGS.tex
+   CompareItem : cpu : elapse:
+   CompareItem : mem : Memory in use:
+   CompareItem : bdd : Peak number of live nodes:
+   ----------------------------------------------------------------------
+
+   Each line defines a parameter of the regression test.
+
+   * DesignDirectory gives the path to the directory where the input files are
+   stored.  In  this  case,  we  are  using  the central repository under
+   ~hsv/vis/Regression. It's typically a good idea to store the results of
+   regression tests in a separate place from the input files. In our examples,
+   the results are stored in the current directory.
+
+    * DesignList gives the name of the file containing the list of test cases
+   to  run.  Each  line  consists of several white space-separated fields
+   describing the files making up the test case. The first field is a path to
+   the files relative to DesignDirectory. The second field is the test case
+   name. The remaining fields are file names. More on this later, when we talk
+   about the design list file in detail.
+
+    * ReferenceVis and NewVis give paths to the two versions of vis to be
+   compared in the regression test. They can be the same, as in this case in
+   which both are the "nightly build."
+
+    * ReferenceVisNickName and NewVisNickName are two identifiers that are used
+   in the LaTeX tables to refer to the two versions that are compared. Short
+   mnemonics are preferable. Avoid using underscores, because they currently
+   cause trouble with LaTeX.
+
+    * ReferenceOutputDir and NewOutputDir give the names of the directories in
+   which the results of the runs will be stored. In each of these directories,
+   vis_reg will create a directory for each test case. The names of these
+   directories are the test case names taken from the design list. Therefore,
+   these names must be unique.
+
+    * RefCommandTemplate and NewCommandTemplate are the templates from which
+   vis_reg produces the scripts used to run the test cases. The mechanism used
+   to derive the scripts from the templates and the design list is described in
+   detail when we talk about the template files. The two templates can be the
+   same file.
+
+    * bRefRun and bNewRun are flags that tell vis_reg which of the two sets of
+   experiments should be run (if any). If one set of results has been already
+   computed, the corresponding flag should be set to FALSE. If both flags are
+   FALSE, vis_reg simply regenerates the summary table.
+
+    * bCompareCounterExample is a flag that instructs vis_reg to scan the
+   output  files  for  counterexamples and record their lengths. For each
+   counterexample, stem and cycle length are found. If this flag is set to
+   FALSE, counterexamples are not analyzed and the corresponding table is not
+   produced.
+
+    * bDefaultInitCommand is a flag that, if set to TRUE, instructs vis_reg to
+   generate a default set of commands to initialize each vis run. This option
+   allows one to save some time in preparing the templates, at the expense of
+   some flexibility.
+
+    * ResultForPerformance is the name of the LaTeX file to which vis_reg
+   writes the summary of the experiments. Its format is described in detail
+   later.
+
+    *  CompareItem specifies one item to be monitored in the experiments.
+   Multiple CompareItem lines may appear in the configuration file. Each one
+   consists of two items: an identifier, and a pattern. The identifier is used
+   in the table to denote the item, whereas the pattern is used to extract from
+   the output files the information to be put in the tables.
+
+    In our example, we declare
+
+    CompareItem : mem : Memory in use:
+
+   We instruct regression_test to search for a line beginning with "Memory in
+   use:" in each section of the output file. The token immediately following
+   the occurrence of the pattern is the data item to be put in the table under
+   "mem." so that the resulting LaTeX table contains data on the memmory usage.
+
+    Since  the  output file is divided into sections delimited by strings
+   "CommandBegin" and "CommandEnd." (See below.), each section is searched for
+   the patterns specified by the CompareItem declarations. If the pattern is
+   matched, the item appears in the table for that section.
+
+    To run the regression_test we need configuration file, template file and
+   design list. In case of template file, we need a two template files, since
+   we want to compare two different run of vis. The syntax of the two templates
+   is identical. We describe the template for "new," but all we say applies to
+   "ref" as well. The "new" template for our example is shown below.
+   ----------------------------------------------------------------------
+
+   echo CommandBegin init
+   read_model
+   flt
+   order_vars
+   part
+   time
+   print_bdd_stats
+   echo CommandEnd init
+   echo CommandBegin ci
+   set hd_frontier_approx_threshold 3500
+   ci -t 3600 -g $HintFile $InvFile
+   time
+   print_bdd_stats
+   echo CommandEnd ci
+   echo CommandBegin ci_cex
+   ci -d 1 -i -t 3600 -g $HintFile $InvFile
+   time
+   print_bdd_stats
+   echo CommandEnd ci_cex
+   ----------------------------------------------------------------------
+
+   Before proceeding to its discussion, it is instructive to examine the script
+   that regression_test produces from it for one test case. regression_test
+   relies on vis's shell variables and aliases to customize the script. The
+   script consists of a preamble in which variables and aliases are defined,
+   followed by one or more sections, each corresponding to a major step in the
+   experiment. Statistics will be collected for each step separately. Our
+   example has three sections, whose names are "init," "ci," and "ci_cex." The
+   names of the sections are arbitrary, except that the automatically generated
+   initialization section is always called "init."
+   ----------------------------------------------------------------------
+
+   set vis_stdout ./result_inv_gs/am2901/am2901.out
+   set vis_stderr ./result_inv_gs/am2901/am2901.err
+   set BlifFile /projects/development/hsv/vis/Regression/Am2901/am2901.mv
+   set OrdFile /projects/development/hsv/vis/Regression/Am2901/am2901.ord
+   set InvFile /projects/development/hsv/vis/Regression/Am2901/am2901.inv
+   set HintFile /projects/development/hsv/vis/Regression/Am2901/am2901.hint
+   alias read_model "rlmv $BlifFile"
+   alias set_fairness " "
+   alias order_vars "so -s input_and_latch $OrdFile"
+   echo CommandBegin init
+   read_model
+   flt
+   order_vars
+   part
+   time
+   print_bdd_stats
+   echo CommandEnd init
+   echo CommandBegin ci
+   set hd_frontier_approx_threshold 3500
+   ci -t 3600 -g $HintFile $InvFile
+   time
+   print_bdd_stats
+   echo CommandEnd ci
+   echo CommandBegin ci_cex
+   ci -d 1 -i -t 3600 -g $HintFile $InvFile
+   time
+   print_bdd_stats
+   echo CommandEnd ci_cex
+   quit
+   ----------------------------------------------------------------------
+
+   The variables and the aliases are defined by vis_reg by examining the fields
+   of the test case description in the design file. regression_test uses file
+   extensions to identify file types. (E.g., .ord indicates an order file in
+   "input_and_latch" format.) A full list of extensions is given below.
+
+   regression_test defines variables for all the file types actually available
+   for the experiment, and only for those. It also defines three aliases that
+   provide some flexibility in mixing different experiments in the same batch.
+
+   For instance, "read_model" is defined as either
+
+           read_blif_mv $BlifFile
+
+   or
+
+           read_blif $BlifFile
+
+   depending on whether the design list specifies a .mv file or a .blif file as
+   model file.
+
+   The definition of "order_vars" takes into account whether an order file is
+   available or not. Finally, the definition of "set_fairness" depends on
+   whether a .fair file is available. This allows one to mix model checking
+   experiments for which no fairness condition is specified to experiments that
+   do require fairness conditions.
+
+   When  bDefaultInitCommand is FALSE, the script is simply the preamble,
+   followed by the unchanged template, follows by the "quit" command, which is
+   always automatically added.
+
+   When bDefaultInitCommand is TRUE, regression_test also adds an automatically
+   generated "init" section between the preamble and the template. This default
+   section is equivalent to
+
+   echo CommandBegin init
+   read_model
+   flt
+   order_vars
+   part
+   time
+   print_bdd_stats
+   echo CommandEnd init
+
+   Notice  that  one  has  no  control over dynamic reordering during the
+   initialization phase if bDefaultInitCommand is TRUE.
+
+   The template should refer to the defined aliases and variables to tailor
+   itself to each test case. Notice, however, that one is not forced to use
+   "order_vars." If one wants to always use vis's static ordering algorithm,
+   (s)he can simply use "so" instead of "order_vars." Likewise, one can decide
+   to always ignore fairness constraints by not including "set_fairness."
+
+   On the other hand, it is usually a bad idea to explicitly include commands
+   like
+
+   read_blif_mv
+   read_blif
+   so -s input_and_latch
+   read_fairness
+
+   in the templates, because they limit the range of test cases to which they
+   can be applied.
+
+   As we said, the templates, and hence the scripts, are divided in sections.
+   Each section begins and ends with an "echo" command. These commands write
+   delimiters to the output file, which are used by vis_reg to define the scope
+   of  the  pattern  searches.  It is important that the tag specified in
+   corresponding pairs of CommandBegin and CommandEnd be the same.
+
+   The calls to "print_bdd_stats" are typically used to add to the output files
+   the information requested by the CompareItem declarations. It is a good idea
+   to specify timeouts for potentially expensive steps.
+
+   The design list file has one line for each test case. A master design list
+   is in ~hsv/vis/Regression/DesignList. Specific design lists can be obtained
+   by commenting out or deleting lines from this master list. One can also
+   create an entirely new list according to the following rules.
+
+   Lines starting with '#' are interpreted as comments and are skipped, as in
+   all files read by vis_reg.
+
+   A test case is a named collection of related files that can be used to run
+   one or more experiments. As mentioned before, each line consists of white
+   space-separated fields. The first is a (relative) path, while the second is
+   the  collection  name.  The  remaining fields specify the files in the
+   collection.
+
+   The smallest collection will specify one .mv or one .blif file. This file is
+   called the "model file," and should always appear in the third field of the
+   line. If the model file is the only file specified, one can run reachability
+   analysis, but not much more. Vis_reg understands the file extensions shown
+   in the following table. For each extension, the variable bound to the file
+   name and a short explanation are given.
+
+   .mv $BlifFile model file to be read with rlmv
+   .blif $BlifFile model file to be read with rl
+   .ord $OrdFIle order file to be read with so -s input_and_latch
+   .inv $InvFile invariant file to be read with ci
+   .ctl $CtlFile property file to be read with mc
+   .fair $FairFile fairness file to be read with rf
+   .hint $HintFile hint file to be read with the -g option of mc, ci, and rch
+
+   Only one file of each type can appear in the collection defining one test
+   case. If multiple property files, or different order files are available for
+   one model file, one has to create two test cases for that model. Different
+   models, on the other hand, can share property files, order files, and so on.
+   The master design list provides examples for both these situations.
+
+   It is not possible to specify both a .mv file and a .blif file for one test
+   case. There must be exactly one model file per test case.
+
+   As was mentioned before, it is important that the name of a test case be
+   unique in the entire batch used for a regression test. On the other hand,
+   several test cases may share the same directory, and often do when they have
+   some files in common.
+
+   The result summary created by regression_test is a LaTeX file consisting of
+   several tables. There is one table with performance stats for each section
+   of  the  output file. In addition, there is an optional counterexample
+   comparison table that summarizes PASS/FAIL information for the properties
+   and the length of counterexamples. For each failing property, the length of
+   the stem and the length of the cycle (if applicable) are reported.
+
+   Each  performance table consists of one column for the test case name,
+   followed  by  as many groups of three columns as there are CompareItem
+   declarations applicable to the section that the table summarizes.
+
+   Each group of three columns gives the data for the reference run, the data
+   for the new run, and the improvement. Vis_reg regards smaller as better.
+   Hence, the improvement is positive if the CPU time, memory occupation, and
+   so on, have decreased from the reference run to the new run. The improvement
+   is computed as
+
+   (value(ref) - value(new)) / value(ref) * 100.
+
+   Notice that this formula tends to make "new" look bad. for instance, if new
+   is twice as fast as ref, the improvement is 50%. If ref is twice as fast,
+   however, the "improvement" is -100%.
+
+   The results of each test case are stored in a separate directory, whose name
+   is obtained by concatenating ReferenceOutputDir (or NewOutputDir) with the
+   test case name. Each directory stores three files, whose names are given by
+   the test case name concatenated with .src, .out, and .err.
+
+   * test_case_name.src stores the script used to run vis.
+   * test_case_name.out stores what vis writes to vis_stdout.
+   * test_case_name.err stores what vis writes to vis_stderr.
+
+   One  has  to  be careful, because vis_reg will overwrite these results
+   directories without warning if run twice with the same ReferenceOutputDir or
+   NewOutputDir and bRefRun or bNewRun set to TRUE.
+
+   With '-s' option, you can create c-shell script file to be able to run
+   experiments in shell. We add this option to solve the problem that are
+   happened when your template file contains child-process by system call.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

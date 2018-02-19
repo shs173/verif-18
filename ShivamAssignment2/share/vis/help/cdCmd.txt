@@ -1,0 +1,17 @@
+
+  cd - change the current node
+     _________________________________________________________________
+
+   cd [-h] <child_instance_name> or <..>
+
+   Changes the current node in the existing hierarchy. The argument should be
+   either the name of a child node or .. meaning the parent node. Note that cd
+   ../foo is not allowed.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,40 @@
+
+  read_order - Read and reorder variable order from a file.
+     _________________________________________________________________
+
+   read_order [-h] [-v] [<file>]
+
+   This command reads variable order from a file and reorder variable order
+   according to the order. This command can be used any time after static_order
+   command. However, the users should notice that there is a possibility to get
+   BDD blowups during this command.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -g <group>
+          Specify whether to group present and next state variables or not.
+
+          0: Do not group.
+
+          1: Do group (default).
+
+   -v
+          Print debug information.
+
+   <file>
+          A file containing names of network nodes, used to specify a variable
+          ordering. The name of a node is the full hierarchical path name,
+          starting from the current hierarchical node. A node should appear at
+          most once in the file. Each node name should appear at the beginning
+          of a new line, with no white space preceeding it. The end of a node
+          name is marked by white space, and any other text on the rest of the
+          line  is  ignored. Any line starting with "#" or white space is
+          ignored. See write_order for a sample file. Note that the variable
+          ordering  cannot  be specified at the bit-level; it can only be
+          specified at the multi-valued variable level.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

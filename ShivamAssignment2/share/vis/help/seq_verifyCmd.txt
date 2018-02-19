@@ -1,0 +1,79 @@
+
+  seq_verify - verify the sequential equivalence of two flattened networks
+     _________________________________________________________________
+
+   seq_verify [-b] [-f <filename>] [-h] [-p <partition method>] [-t <timeOut>]
+   [-B] [-i] [-r] <filename> [<filename>]
+
+   Please read the documentation for the command comb_verify before reading on.
+   The  concepts  of roots and leaves in this command are the same as for
+   comb_verify, except for an added constraint: the set of leaves has to be the
+   set of all primary inputs. This obviously produces the constraint that both
+   networks have the same number of primary inputs. Moreover, no pseudo inputs
+   should be present in the two networks being compared. The set of roots can
+   be an arbitrary subset of nodes.
+
+   The  command  verifies  whether  any  state,  where  the values of two
+   corresponding roots differ, can be reached from the set of initial states of
+   the product machine. If this happens, a debug trace is provided.
+
+   The sequential verification is done by building the product finite state
+   machine.
+
+   The command has two execution modes, just as for comb_verify. In the first
+   mode, two BLIF-MV files are given as arguments to the command:
+
+  vis> seq_verify foo.mv bar.mv
+  
+
+   In the second mode, a single BLIF-MV file is taken. This is network2. It is
+   assumed that network1 is from a hierarchy that has already been read in. If
+   a network is present at the current node (i.e. flatten_hierarchy has been
+   executed), it is used for verification; otherwise the command does nothing.
+
+  vis> read_blifmv foo.mv
+  vis> flatten_hierarchy
+  vis> seq_verify bar.mv
+  
+
+   Command options:
+
+   -b
+          Specifies that the input files are BLIF files.
+
+   -f <filename>
+          Provides the correspondence between the leaves and roots of network1
+          and network2. leaves has to be the set of primary inputs of the
+          networks. roots can be any subset of nodes. If this option is not
+          used, it is assumed that the correspondence is by name, and that the
+          roots are the combinational outputs.
+
+   -h
+          Print the command usage.
+
+   -p <partition method>
+          Specifies the partitioning method for the product machine. Supported
+          methods  are  "total",  "partial", and "inout" (see the command
+          build_partition_mdds for more information). If this option is not
+          specified, then the default method "inout" is used.
+
+   -t <timeOut>
+          Time in seconds allowed to perform equivalence checking. The default
+          is infinity.
+
+   -B
+          Use backward image computation to traverse the state space of the
+          product machine. By default, forward image computaion is used.
+
+   -i
+          Print BDD statistics. This is the only way to see BDD stastics during
+          this  command.  print_bdd_stats after this command doesn't show
+          information related to this command.
+
+   -r
+          Enable  BDD  reordering during the equivalence check. Note that
+          dynamic_var_ordering has no effect on whether reordering is enabled
+          during the execution of seq_verify.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

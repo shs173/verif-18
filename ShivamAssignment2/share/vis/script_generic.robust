@@ -1,0 +1,65 @@
+# Generic script file for creating the next state relation of a system
+# This script invokes the safest commands to create the next state relation.
+# The script should work in almost all cases. Hence the subscript "robust".
+
+# Author: Rajeev K. Ranjan
+
+# Usage: 
+# After reading in the design using one of 
+# "read_blif, read_blif_mv, or read_verilog" commands, 
+# on VIS prompt type:  
+# source script_generic.robust 
+#
+# Trouble shooting:
+# i) Invoke the script exactly the way prescribed (no option to "source")
+
+### Script starts here #################################################
+
+  # Get rid of the aliases for the commands used in this file
+
+unalias flatten_hierarchy
+unalias static_order
+unalias build_partition_mdds
+unalias print_img_info
+unalias compute_reach
+unalias dynamic_var_ordering
+unalias write_order
+
+  # Perform the complete specification and deterministic checks
+
+flatten_hierarchy
+
+  # Variable ordering, assuming the default has taken care of the best
+  # setting.
+
+static_order
+
+  # Keep the dynamic variable ordering enabled all the time.
+
+dynamic_var_ordering -e sift
+
+  # Build the next state functions. Use the frontier method such that in
+  # case of very large examples, we can create intermediate variables
+  # and have a handle on the BDD size.
+
+
+  # We do not want  next state functions to have more than 5000 nodes.
+
+set partition_threshold 5000
+build_partition_mdds frontier
+
+  # Next create the next state relation, create clusters and
+  # order them.
+
+  # Use the method published in IWLS 95.
+  # And set the appropriate parameters
+
+set image_method iwls95
+
+  # Make clusters of no larger than 5000
+
+set image_cluster_size 5000
+
+  # Finally invoke the reachability command.
+
+print_img_info

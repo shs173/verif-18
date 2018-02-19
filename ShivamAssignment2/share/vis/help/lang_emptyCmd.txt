@@ -1,0 +1,150 @@
+
+  lang_empty - perform language emptiness check on a flattened network
+     _________________________________________________________________
+
+   lang_empty  [-b]  [-d  <dbg_level>] [-f <dbg_file>] [-h] [-i] [-s] [-t
+   <time_out_period>] [-v <verbosity_level>] [-A <le_method>] [-D <dc_level>]
+   [-S <schedule>] [-L <lockstep_mode>]
+
+   Performs language emptiness check on a flattened network. The language is
+   not empty when there is a fair path starting at an initial state. Before
+   calling this command, the user should have initialized the design by calling
+   the command [1]init_verify.
+
+   A  fairness  constraint can be read in by calling the [2]read_fairness
+   command; if none is specified, all paths are taken to be fair.
+
+   The system is reduced automatically with respect to the set of fairness
+   constraints.  If  the  language  is not empty, a proof of this fact is
+   generated. A proof is a fair path starting at an initial state. This is
+   represented by a finite sequence of states starting at an initial state (the
+   stem) leading to a fair cycle, i.e., a cycle on which there lies a state
+   from each fairness condition.
+
+   Command options:
+
+   -b
+          Use backward analysis when performing debugging; the default is to
+          use forward analysis. This should be tried when the debugger spends a
+          large amount of time when creating a path to a fair cycle.
+
+   -d <dbg_level>
+          Specify whether to demonstrate a proof of the language non-emptiness
+
+          dbg_level must be one of the following:
+
+          0 : No debugging performed. This is the default.
+
+          1 : Generate a path to a fair cycle.
+
+   -f <dbg_file>
+          Write the debugger output to dbg_file.
+
+   -h
+          Print the command usage.
+
+   -m
+          Pipe debugger output through the UNIX utility more.
+
+   -i
+          Print  input  values  causing transitions between states during
+          debugging. Both primary and pseudo inputs are printed.
+
+   -s
+          Print debug output in the format accepted by the [3]simulate command.
+
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   -v <verbosity_level>
+          Specify verbosity level. This sets the amount of feedback on CPU
+          usage and code status.
+
+          verbosity_level must be one of the following:
+
+          0 : No feedback provided. This is the default.
+
+          1 : Feedback on code location.
+
+          2 : Feedback on code location and CPU usage.
+
+   -A <le_method>
+          Specify whether the compositional SCC analysis algorithm, Divide and
+          Compose (DnC), is enabled for language emptiness checking. The DnC
+          algorithm first enumerates fair SCCs in an over-approximated abstract
+          model,  and then successively refines them in the more concrete
+          models. Since non-fair SCCs can be ignored in the more concrete
+          models, a potentially large part of the state space are pruned away
+          early on when the computations are cheap.
+
+          le_method must be one of the following:
+
+          0 : no use of Divide and Compose (Default).
+
+          1 : use Divide and Compose.
+
+   -D <dc_level>
+          Specify extent to which don't cares are used to simplify MDDs. Don't
+          cares are minterms on which the value taken by functions does not
+          affect the computation; potentially, these minterms can be used to
+          simplify MDDs and reduce time taken to perform MDD computations.
+
+          dc_level must be one of the following:
+
+          0 : No don't cares are used.
+
+          1 : Use unreachable states as don't cares. This is the default.
+
+   -S <schedule>
+          Specify schedule for GSH algorithm, which generalizes the Emerson-Lei
+          algorithm and is used to compute greatest fixpoints. The choice of
+          schedule  affects the sequence in which EX and EU operators are
+          applied. It makes a difference only when fairness constraints are
+          specified.
+          <schedule> must be one of the following:
+
+          EL : EU and EX operators strictly alternate. This is the default.
+
+          EL1 : EX is applied once for every application of all EUs.
+
+          EL2 : EX is applied repeatedly after each application of all EUs.
+
+          budget : a hybrid of EL and EL2.
+
+          random : enabled operators are applied in (pseudo-)random order.
+
+          off : GSH is disabled, and the old algorithm is used instead. The old
+          algorithm  uses  the  EL  , but the termination checks are less
+          sophisticated than in GSH.
+
+   -F
+          Use forward analysis in the computation of the greatest fixpoint.
+          This option is incompatible with -d 1 or higher and can only be used
+          with -D 1.
+
+   -L <lockstep_mode>
+          Use the lockstep algorithm, which is based on fair SCC enumeration.
+          <lockstep_mode> must be one of the following:
+
+          off : Lockstep is disabled. This is the default. Language emptiness
+          is checked by computing a hull of the fair SCCs.
+
+          on : Lockstep is enabled.
+
+          all : Lockstep is enabled; all fair SCCs are enumerated instead of
+          terminating as soon as one is found. This can be used to study the
+          SCCs of a graph, but it is slower than the default option.
+
+          n : (n is a positive integer). Lockstep is enabled and up to n fair
+          SCCs are enumerated. This is less expensive than all , but still less
+          efficient than on , even when n = 1 .
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/init_verifyCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/html/read_fairnessCmd.html
+   3. file://localhost/projects/development/hsv/vis/common/doc/html/simulateCmd.html

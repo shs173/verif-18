@@ -1,0 +1,19 @@
+
+  ltl2snf - Trnalate LTL formula into Separated Normal Form.
+     _________________________________________________________________
+
+   ltl2snf [-h] <file_name>
+
+   Command options:
+
+   -f <ltl_file>
+          The input file containing LTL formulae.
+
+   -n
+          Negate the formulae.
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,168 @@
+
+  print_hd_options - print information about the HD options currently in use
+     _________________________________________________________________
+
+   print_hd_options [-h]
+
+   Prints  information  about the current HD options. The HD method is an
+   alternate  method to compute a least fixpoint and is provided with the
+   compute_reach and check_invariant commands. The method is described in Ravi
+   and Somenzi, ICCAD95. The command can be used only when compiled with the
+   CUDD package.
+
+   Command options:
+
+   -h
+   Print the command usage.
+
+   Set parameters: The HD options are specified with the set command.
+
+   hd_frontier_approx_method <method>
+          This option specifes the method to approximate the frontier set.
+
+          Methods:
+
+          remap_ua : (Default) The BDD approximation method of DAC98 Ravi,
+          Shiple, McMillan, Somenzi.
+
+          biased_rua : Approximation method similar to remap_ua, but uses a
+          bias function. The bias function is set appropriate to the context.
+
+          under_approx : The BDD approximation method of Shiple's thesis.
+
+          heavy_branch : The BDD approximation method of ICCAD95 Ravi, Somenzi.
+
+          short_paths : The BDD approximation method of ICCAD95 Ravi, Somenzi.
+
+          compress : An approximation method that runs short_paths first and
+          then remap_ua.
+
+   hd_frontier_approx_threshold <number>
+          This option specifes the size of the frontier to be used for image
+          computation. The threshold for the various methods is approximate
+          (not strictly adhered to). For the remap_ua and biased_rua method,
+          this threshold is a lower bound and the default is 3500. For the
+          short_paths and heavy_branch methods, this threshold is an upper
+          bound. Therefore, a default of 2000 is set to obtain a meaningful
+          result. Any value lower than 2000 is corrected to this default. This
+          value is also relevant for dead-end computations. In a dead-end, the
+          threshold for each image computation (of a disjunct of Reached) is
+          five times the frontier approximation threshold. When the frontier
+          approximation threshold is 0, the threshold for each dead-end image
+          computation is 5000.
+
+   hd_approx_quality <double>
+          This option specifies the quality factor for the under_approx and
+          remap_ua methods. Default value is 1.0. The range is any double value
+          greater than 0. Smaller quality factors produce smaller results.
+          Meaningful values are between 1 and 2.
+
+   hd_approx_bias_quality <double>
+          This option specifies the quality factor for the biased_rua method.
+          Default value is 0.5. The range is any double value greater than 0.
+          Smaller quality factors produce smaller results. Meaningful values
+          are between 0 and 1.
+
+   hd_dead_end <method>
+          This option specifies the method used for dead-end computation. A
+          "dead-end"  is  characterized  by an empty frontier. A dead-end
+          computation involves generating new states from the reached set.
+
+          Methods:
+
+          brute_force : Computes the image of the entire reached set. May be
+          fatal if the reached set is very large.
+
+          conjuncts : (Default) Computes the image of reached by decomposing
+          into parts.
+
+          hybrid : Computes the image of a subset of reached. If no new states,
+          then the reaminder is decomposed in parts.
+
+   hd_dead_end_approx_method <method>
+          This option allows the specification of the approximation method to
+          use to compute the subset of Reached at the dead-end. The threshold
+          used is the same as hd_frontier_approx_threshold.
+
+          For methods, refer hd_frontier_approx_method methods. Default is
+          remap_ua.
+
+   hd_no_scrap_states
+          This allows the option of not adding the "scrap" states. Scrap states
+          are residues from the approximation of the frontier set. Default is
+          to add the scrap states.
+
+   hd_new_only
+          This allows the option of adding considering only new states of each
+          iteration for image computation. The default is to take a set in the
+          interval of the new states and the reached set.
+
+   hd_only_partial_image
+          This allows the option of HD with partial image computation only (no
+          approximation of the frontier set). Default is to allow both partial
+          images and approximation of the frontier set.
+
+   Partial Image options:
+
+   hd_partial_image_method <method>
+          This option allows the image computation to approximate the image
+          with the specified method.
+
+          Methods:
+
+          approx : (Default) Computes a partial image by under-approximating
+          the intermediate products of image computation.
+
+          clipping  : Computes a partial image by "clipping" the depth of
+          recursion of the and-abstract computations during image computation.
+
+   hd_partial_image_threshold <number>
+          This options allows the specification of a threshold (in terms of bdd
+          node  size  of  the  intermediate  product)  that  will trigger
+          approximation of the intermediate product. Default is 200000. This
+          option has to be used in conjunction with hd_partial_image_size. If
+          the value of hd_partial_image_size is larger than this option, then
+          the approximation of the intermediate size will be as large as the
+          hd_partial_image_size number.
+
+   hd_partial_image_size <number>
+          This options allows the specification of a size (in terms of bdd node
+          size of the intermediate product) that is the target size of the
+          approximated  intermediate  product. Default is 100000. For the
+          short_paths and heavy_branch methods, the size of the approximation
+          is corrected to 10000 if the size specified is lower. This is because
+          the short_paths and heavy_branch methods consider this size as an
+          upper bound on the approximation. This option has to be used in
+          conjunction  with  hd_partial_image_threshold.  If the value of
+          hd_partial_image_threshold is much larger than this option, then the
+          desired  size  will not be obtained as approximation may not be
+          triggered.
+
+   hd_partial_image_approx <method>
+          This options allows the specification of the method to be used to
+          approximate the intermediate product.
+
+          For methods, refer hd_frontier_approx_method methods. Default is
+          remap_ua.
+
+   hd_partial_image_approx_quality <double>
+          This option specifies the quality factor for the under_approx and
+          remap_ua methods for partial image computation. Default value is 1.0.
+          Range of values is any double greater than 0. Smaller quality factors
+          produce smaller results. Meaningful values are between 1 and 2.
+
+   hd_partial_image_approx_bias_quality <double>
+          This option specifies the quality factor for the biased_rua method
+          for partial image computation. Default value is 0.5. Range of values
+          is any double greater than 0. Smaller quality factors produce smaller
+          results. Meaningful values are between 0 and 1.
+
+   hd_partial_image_clipping_depth <double>
+          This  option allows the specification of the depth at which the
+          recursion can be clipped when _hd_partial_image_method_ is clipping.
+          Range  of values is between 0 and 1. The clipping depth is then
+          calculated as the specified fraction of the number of variables.
+          Default is 0.4.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

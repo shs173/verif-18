@@ -1,0 +1,234 @@
+
+  res_verify - Verifies a combinational circuit using residue arithmetic.
+     _________________________________________________________________
+
+   res_verify [-b] [-d <n>] [-h] -i <filename> [-m <filename>] [-n <filename>]
+   {-o <filename> | -O} [-s <filename>] [-t <timeOut>]
+
+   This command performs residue verification between two networks. The method
+   used is based on residue arithmetic and the Chinese Remainder theorem; it is
+   described in [1] ftp://vlsi.colorado.edu/pub/fmcad96.ps. Verification is
+   performed  by interpreting the outputs of the circuits as integers and
+   verifying the residues of the outputs with respect to a set of moduli. The
+   choice of moduli is directed by the Chinese Remainder Theorem in order to
+   prove  equivalence  of  the  two circuits. This method works well with
+   multipliers and possibly other arithmetic circuits (due to its dependence on
+   residue arithmetic). For the same reason, it is necessary to specify an
+   output order which determines how the outputs are interpreted as integers.
+   Discretion  should  be  exercised  in  applying this method to general
+   combinational circuits.
+
+   Residue verification is available only if vis is linked with the cu BDD
+   package.  (This is the default.) It reads both blif and blif-mv files.
+   However, it does NOT support multi-valued variables. Residue verification is
+   primarily for combinational verification, but may be applied to sequential
+   circuits with the same state encoding. The latch outputs are then considered
+   to be combinational inputs of the circuits and the latch inputs and reset
+   are considered to be combinational outputs of the circuits.
+
+   There are two ways to perform residue verification in this package. As a
+   first option, two files describing two networks, the specification and the
+   implementation, (in the same format, blif or blif-mv, see option -b) are
+   given in the command line; the procedure tries to verify the equivalence of
+   the combinational outputs as functions of the combinational inputs.
+
+   vis> res_verify -o network.order -i network1.blif -s network2.blif
+
+   In this case both networks are read in, flattened and the verification is
+   performed between the combinational outputs of both networks. The -i option
+   denotes the implementation file and the -s option denotes the specification
+   file. The -o option specifies the order of outputs for the circuits (See
+   Command Options below for detailed explanation).
+
+   A second way to perform the verification is as follows. The specification
+   network is taken from a hierarchy already read into VIS. Then the res_verify
+   command  compares that specification against an implementation network
+   obtained from the file in the command line. Any previous verification,
+   performed with the specification, can be used towards the next verification
+   task only if the same implementation circuit is being verified against and
+   the same number of outputs have been directly verified with sucess in the
+   previous attempt. The typical sequence of commands given to perform such
+   task would be:
+
+   vis> read_blifmv network1.mv
+   vis> flatten_hierarchy
+   vis> res_verify -o network.order -i network2.mv
+
+   If  the hierarchy has been read but no flattened network exists at the
+   current node, the command will return without doing anything. If one of the
+   networks used is the one in the current node in the hierarchy, then the
+   information  regarding the verification process will be stored in that
+   network.
+
+   Note:  It  is  important  to  keep the specification distinct from the
+   implementation because most parameters specified for the res_verify command
+   are with respect to the specification. For example, the output order is
+   specified with respect to the specification. The file that is read in first
+   in the second format, is considered to be the specification.
+
+   There is an option to directly verify some outputs by building the BDDs for
+   the corresponding outputs of the 2 circuits. In that case, if the user wants
+   to use an initial ordering, the only way to do it is the second method and
+   reading in the network, one may specify the initial order using static
+   order.
+
+   The   command  does  not  repeat  residue  verification  if  the  same
+   specification-implementation pair have been verified with success and the
+   same number of directly verified outputs have been verified in the previous
+   attempt.
+
+   Relevant flags to be set using the set command: 
+
+   residue_verbosity 
+          Default is 0, turns on verbosity to the desired level between 0 and
+          5.
+
+   residue_ignore_direct_verified_outputs 
+          Default 0 (FALSE). If 1, then ignores directly verified outputs
+          during residue verification.
+
+   residue_top_var 
+          Default "msb". The 2 possible values are "msb" and lsb"; this puts
+          the most/least significant bit near the top or bottom of the residue
+          decision diagram.
+
+   residue_autodyn_residue_verif 
+          Default 0 (FALSE). If 1, turns on dynamic reordering during residue
+          verification.
+
+   residue_residue_dyn_method 
+          Default "groupsift". Specifies the method for dynamic reordering
+          during residue verification. Other methods supported are "same" (same
+          as before), "none", "random", "randompivot", "sift", "siftconverge",
+          "symmsiftconverge", "symmsift", "window2", "window3", "window4",
+          "window2converge","window3converge","window4converge","groupsift",
+          "groupsiftconverge", "anneal", "genetic", "linear", "linearconverge",
+          "exact".
+
+   residue_autodyn_direct_verif 
+          Default 0 (FALSE). If 1, turns on dynamic reordering during direct
+          verification.
+
+   residue_direct_dyn_method 
+          Default "groupsift". Specifies the method for dynamic reordering
+          during direct verification. Other methods supported are "same" (same
+          as before), "none", "random", "randompivot", "sift", "siftconverge",
+          "symmsiftconverge", "symmsift", "window2", "window3", "window4",
+          "window2converge","window3converge","window4converge","groupsift",
+          "groupsiftconverge", "anneal", "genetic", "linear", "linearconverge",
+          "exact".
+
+   residue_layer_schedule 
+          Default "alap". This is a flag to specify the layering strategy of
+          the networks. The 2 options are "asap" (as soon as possible) and
+          "alap" (as late as possible).
+
+   residue_layer_size 
+          Default largest layer size in network. Specifies the maximum layer
+          size that can be composed in (relevant for vector composition only).
+
+   residue_composition_method 
+          Default "vector". Specifies the composition method to be used in
+          composing the network into the residue ADD. The options are "vector",
+          "onegate", "preimage" and "superG".
+
+   Command Options: 
+
+   -b
+          If this option is specified, the specification and the implementation
+          files read are considered to be in blif-mv format. Default is blif
+          format.
+
+   -d n
+          This option specifies the number of outputs to be directly verified.
+          That is, for n least significant outputs of the circuit, this command
+          performs like comb_verify. The actual outputs are read off the output
+          order array. Since the output order array is specified starting with
+          the MSB, the number of directly verified outputs will be a chunk of
+          the bottom part of the output order array. The option "-d all" sets
+          the  number  of  directly  verified  outputs  to  the number of
+          combinational outputs in the circuit i.e., all outputs are directly
+          verified. The direct verification for small BDD sizes is faster and
+          overall  reduces  the  number  of  primes to be used in residue
+          verification. In general, one output is checked at a time against the
+          corresponding output of the other network and consequently , this
+          method may be fast and use less memory resources.
+          IMPORTANT: It is possible to specify an initial order for the direct
+          verification. This is done by reading in the specification file and
+          using static_order to specify the initial order. The implementation
+          will get the same order as the specification. When specifying the
+          initial order, one must be careful not to specify the -s option in
+          the res_verify command. The -s option reads in the specification file
+          again and the initial order is lost.
+
+   -h
+          Print the command usage.
+
+   -i <filename>
+          Implementation network to perform verification against. The file must
+          be in blif format unless -b is specified, in which case the file is
+          taken to be in blif-mv format. The blif format is the default.
+
+   -m <filename>
+          Optional file name specifying the matching pair of output names
+          between the two networks. If not specified, it is assumed that all
+          outputs have identical names. This option is useful when verifying
+          two circuits whose output names do not match. The file will give
+          pairs of the form name1 name2 to be considered as corresponding
+          outputs in the verification process. In each pair, name1 may belong
+          to the specification and name2 to the implementation or vice-versa.
+          The matching procedure is not capable of dealing with some special
+          situations. For example, when two outputs, one of each network have
+          the same name, they must correspond to the same output. Partial
+          orders may not be specified.
+
+   -n <filename>
+          Optional  file name specifying the matching pair of input names
+          between the two networks. If not specified, it is assumed that all
+          inputs have identical names. This option is useful when verifying two
+          circuits whose input names do not match. The file will give pairs of
+          the form name1 name2 to be considered as corresponding inputs in the
+          verification  process.  In  each  pair, name1 may belong to the
+          specification and name2 to the implementation or vice-versa. The
+          matching  procedure is not capable of dealing with some special
+          situations. For example, when two inputs, one of each network have
+          the same name, they must correspond to the same input. Partial orders
+          may not be specified.
+
+   -o <filename>
+          Required file specifying output order, starting with the MSB. The
+          file must be a list of output names separated by spaces. The list
+          must belong to the specification network and must contain a full
+          order i.e., must contain all the combinational output names. It is
+          advisable to use the -o option as far as possible to specify the
+          order of the outputs.See also -O option.
+
+   -O
+          This option specifies whether the res_verify command should generate
+          a default order for the outputs. If the -o option is not used, this
+          option must be specified. The default order generated is random and
+          is NOT the same as the input files. The set of outputs for the output
+          order may be generated by using the print_network command to write
+          the network into a file and extract the node name from the lines
+          containing the word "comb-output". The set of outputs can then be
+          ordered as required.
+          It is advisable to use the -o option as far as possible to specify
+          the order of the outputs. The -o option overrides the -O option. See
+          also -o option.
+
+   -s <filename>
+          Specification  network.  This  network  will  be  taken  as the
+          specification of the circuit. The result of the computation will be
+          stored in this network. If this network is not provided, the current
+          node of the hierarchy will be taken. The file must contain a blif
+          description of a circuit unless the option -b is specified, in which
+          case the file is considered in blif-mv format. If two networks are
+          specified  in the command line, both of them must have the same
+          format, either blif or blif-mv. The blif format is the default.
+
+   -t <timeOut >
+          Execution time in seconds allowed for verification before aborting.
+          The default is no limit.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

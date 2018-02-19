@@ -1,0 +1,28 @@
+# Script file for checking a set of CTL formula under a set of
+# fairness constraints (no debugging).
+
+# Author: Rajeev K. Ranjan
+
+# Usage: 
+# After reading in the design using one of 
+# "read_blif, read_blif_mv, or read_verilog" commands, 
+# on VIS prompt type:  
+# source script_fair_model_check.robust <fairness_file> <ctl_file>
+#
+# Trouble shooting:
+# i) Invoke the script exactly the way prescribed (no option to "source")
+
+### Script starts here #################################################
+
+  # Source the generic script file
+
+source script_generic.robust
+
+  # Read the fairness constraints.
+
+read_fairness %:2
+
+  # Finally invoke the model checking command (no sharing of
+  # sub-formulae, create reduce FSMs for each formula)
+
+model_check -c -r -d 0 %:3

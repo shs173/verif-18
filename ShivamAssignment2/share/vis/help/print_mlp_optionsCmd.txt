@@ -1,0 +1,72 @@
+
+  print_mlp_options - print information about the MLP image computation options
+  currently in use
+     _________________________________________________________________
+
+   print_mlp_options [-h] [-H]
+
+   Prints information about the current MLP image computation options.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -H
+          Print the MLP image computation set command usage.
+
+   Set parameters: The MLP image computation options are specified with the set
+   command.
+
+   mlp_cluster <method>
+          Specify a method for clustering.
+
+          method must be one of the following:
+
+          0 : linear clustering
+
+          1 : affinity based tree clustering (default)
+
+   mlp_reorder <method>
+          Specify  a  method  for  reordering  after clustering for image
+          computation.
+
+          method must be one of the following:
+
+          0 : no reordering after clustering (default)
+
+          1 : reorder using MLP after clustering (inside)
+
+          2 : reorder using MLP after clustering (outside)
+
+          3 : reorder using IWLS95 after clustering
+
+   mlp_pre_reorder <method>
+          Specify  a  method for reordering after clustering for preimage
+          computation.
+
+          method must be one of the following:
+
+          0 : no reordering after clustering (default)
+
+          1 : reorder using MLP after clustering (inside)
+
+          2 : reorder using MLP after clustering (outside)
+
+          3 : reorder using IWLS95 after clustering
+
+   mlp_postprocess <method>
+          Specify when to do postprocessing.
+
+          method must be one of the following:
+
+          0 : no postprocessing (default)
+
+          1 : do postprocesing after ordering
+
+          2 : do postprocesing after clustering or reordering
+
+          3 : do both 1 and 2
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

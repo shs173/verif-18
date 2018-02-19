@@ -1,0 +1,98 @@
+
+  comb_verify - verify the combinational equivalence of two flattened networks
+     _________________________________________________________________
+
+   comb_verify [-b] [-f <filename>] [-h] [-o <ordering method>] [-t <timeOut>]
+   [-1  <partition  method>]  [-2  <partition  method>]  [-i] <filename1>
+   [<filename2>]
+
+   This  command  verifies the combinational equivalence of two flattened
+   networks. In particular, any set of functions (the roots), defined over any
+   set of intermediate variables (the leaves), can be checked for equivalence
+   between the two networks. Roots and leaves are subsets of the nodes of a
+   network, with the restriction that the leaves should form a complete support
+   for the roots. The correspondence between the roots and the leaves in the
+   two networks is specified in a file given by the option -f . The default
+   option assumes that the roots are the combinational outputs and the leaves
+   are the combinational inputs.
+
+   When there is a pseudo input in the set of leaves, the range of values it
+   can  take  should  be  the  same  as that of the multi-valued variable
+   corresponding to it, for comb_verify to function correctly. This restriction
+   will be removed in future.
+
+   There are two ways to do combinational verification. In the first mode, two
+   BLIF-MV files are given as arguments to the command, e.g.
+
+  vis> comb_verify foo.mv bar.mv
+  
+
+   Verification is done for the flattened networks at the root nodes of the two
+   BLIF-MV hierarchies. In any error messages printed, "network1" refers to the
+   first file, and "network2" refers to the second. Both of these networks are
+   freed at the end of the command. This mode is totally independent from any
+   existing hierarchy previously read in. In the second mode, it is assumed
+   that a hierarchy has already been read in. Then, comb_verify can be called
+   with a single BLIF-MV file, and this will do the comparison between the
+   network  present  at  the  current  node  ("network1") and the network
+   corresponding  to  the  root  node  of  the  hierarchy  in the BLIF-MV
+   file("network2"). A typical sequence of commands is:
+
+  vis> read_blifmv foo.mv
+  vis> init_verify
+  vis> comb_verify bar.mv
+  
+
+   If a hierarchy has been read in but a flattened network does not exist at
+   the current node (flatten_hierarchy has not been invoked), the command does
+   nothing. If a network exists at the current node, but the variables haven't
+   been ordered, then the variables are ordered and a partition created. This
+   partition is freed at the end. A side-effect is that the variables are
+   ordered.  If  a  partition  exists,  then  it  is used if the vertices
+   corresponding to the roots specified are present in it, otherwise a new
+   partition is created with the current ordering. The partition created for
+   the new network read in is always freed at the end.
+
+   Command options:
+
+   -b
+          Specifies that the files are BLIF files and not BLIF-MV files.
+
+   -f <filename>
+          Provides the correspondence between the leaves and roots of network1
+          and network2. If this option is not used, it is assumed that the
+          correspondence is by name, except that two latch inputs match if
+          either they have the same name or the corresponding latch outputs
+          have the same name. Leaves are the combinational inputs, and roots
+          are the combinational outputs.
+
+   -h
+          Print the command usage.
+
+   -t <timeOut>
+          Time in seconds allowed to perform equivalence checking. The default
+          is infinity.
+
+   -o <ordering method>
+          Specifies the ordering method to be used for assigning a common
+          ordering to the leaves of network1 and network2. If this option is
+          not used, ordering is done using a default method. Currently, only
+          the default method is available.
+
+   -1 <partition method>
+          Specifies the partitioning method to be used for network1. Supported
+          methods  are  "total",  "partial", and "inout" (see the command
+          build_partition_mdds for more information). If this option is not
+          specified, then the default method "inout" is used.
+
+   -2 <partition method>
+          Specifies the partitioning method to be used for network2. Supported
+          methods  are  "total",  "partial", and "inout" (see the command
+          build_partition_mdds for more information). If this option is not
+          specified, then default method "inout" is used.
+
+   -i
+          Print Bdd statistics.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

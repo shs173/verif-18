@@ -1,0 +1,30 @@
+
+  print_partition_stats - print statistics about the partition graph
+     _________________________________________________________________
+
+   print_partition_stats [-h] [-n]
+
+   Print statistics about the partition currently attached to the network, such
+   as:
+
+     Method used to build the partition.
+
+     Number of sink vertices.
+
+     Number of source vertices.
+
+     Total number of vertices.
+
+     Number of shared MDD nodes used to represent the functions.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -n
+          Print the name of the network nodes represented by vertices in the
+          partition.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

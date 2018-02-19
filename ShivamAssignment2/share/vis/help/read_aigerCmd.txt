@@ -1,0 +1,43 @@
+
+  read_aiger - read an AIGER file
+     _________________________________________________________________
+
+   read_aiger [-c] [-h] [-v] <file_name>
+
+   Reads an AIGER file into VIS. The existing hierarchy for the input file
+   previously read in is overwritten upon a successful read. If an error is
+   detected while reading a file, the previous hierarchy is preserved.
+
+   Command options:
+
+   -c
+          Semi-canonicalize all the tables in each model. The canonicalization
+          process, assigns a linear order to the table rows and columns, based
+          on  the  value of their entries. For a table with binary valued
+          entries,  this value is exactly the number of 1's in the row or
+          column. Once this linear order is assigned, the rows and columns of
+          the table are swapped so as to order rows and columns with higher
+          value at the beginning of the corresponding row or column order. It
+          is called semi-canonicalization because two tables representing the
+          same logic function need not have the same canonical form.
+
+   -h
+          Print the command usage.
+
+   -v
+          If  set, the program prints out all the unused variables in the
+          blif-mv  file.  Otherwise,  only a warning is printed that some
+          variables are not used.
+
+   <file_name>
+          AIGER file to be read in.
+
+   For more information on AIGER, refer to the [1]AIGER home page. This command
+   uses the atandard AIGER library for parsing.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. http://fmv.jku.at/aiger

@@ -1,0 +1,84 @@
+
+  build_partition_mdds - build a partition of MDDs for the flattened network
+     _________________________________________________________________
+
+   build_partition_mdds [-h] [-i] [-n <list>] [-s <num>] [-t <seconds>] [-v]
+   [<method>]
+
+   Build the MDDs of a flattened network. Depending on the method selected, the
+   MDDs for the combinational outputs (COs) are built in terms of either the
+   combinational inputs (CIs) or in terms of some subset of intermediate nodes
+   of the network. The MDDs built are stored in a DAG called a "partition". The
+   vertices of a partition correspond to the CIs, COs, and any intermediate
+   nodes used. Each vertex has a multi-valued function (represented by MDDs)
+   expressing the function of the corresponding network node in terms of the
+   partition vertices in its transitive fanin. Hence, the MDDs of the partition
+   represent a partial collapsing of the network.
+
+   This  command  must  be preceded by the commands flatten_hierarchy and
+   static_order. The partition built is stored with the network for use by
+   other commands, such as simulate, compute_reach, model_check, etc. This
+   command  has  no  affect  when invoked on a network that already has a
+   partition.  To  remove  the  existing partition of a network, reinvoke
+   flatten_hierarchy.
+
+   The choice of method determines which intermediate nodes are used. The inout
+   method represents one extreme where no intermediate nodes are used, and
+   total represents the other extreme where every node in the network has a
+   corresponding vertex in the partition. If no method is specified on the
+   command line, then the value of the flag partition_method is used (this flag
+   is set by the command set partition_method), unless it does not have a
+   value, in which case the forntier method is used. The different methods
+   available are:
+
+     inout Expresses the combinational outputs in terms of the combinational
+          inputs.
+
+     total The partition built is isomorphic to the combinational part of the
+          network. The function of each node is expressed in terms of its
+          immediate fanins. If the -i is used the function attached to each
+          vertex is computed as a function of the combinational inputs.
+
+     partial Builds a partition using the intermediate nodes specified with the
+          -n option or the -f option.
+
+     frontier  (default)  Builds  a  partition  creating vertices for the
+          intermediate nodes as needed in order to control the BDD size. The
+          threshold  value  for  the BDD size can be set by the parameter
+          "partition_threshold". This method encompasses both "inout" (set
+          partition_threshold  parameter  to  infinity)  and "total" (set
+          partition_threshold parameter to 0).
+
+     boundary Builds a partition in a fashion that preserves all nodes that are
+          Input/Output  nodes of any hnode in the hierarchy rooted at the
+          current hnode.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -i
+          Build the multi-valued functions of each partition vertex in terms of
+          the combinational inputs, rather than in terms of its transitive
+          fanin vertices.
+
+   -n <list>
+          Used  in  conjunction  with the partial method. List is a comma
+          separated list of network nodes to use as intermediate nodes in the
+          partition.
+
+   -s <num>
+          Level  of  severity  of a post-computation check applied to the
+          partition data structure (0 by default, meaning no check).
+
+   -t <seconds>
+          Time in seconds allowed to build the partition. If the computation
+          time goes above that limit, the process of building the partition is
+          aborted. The default is no limit.
+
+   -v
+          Turn on the verbosity.
+            __________________________________________________________
+
+          Last updated on 20120205 22h07

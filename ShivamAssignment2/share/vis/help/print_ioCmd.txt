@@ -1,0 +1,15 @@
+
+  print_io - print the names of inputs/outputs in the current node
+     _________________________________________________________________
+
+   print_io [-h]
+
+   Prints the names of inputs/outputs in the current node.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

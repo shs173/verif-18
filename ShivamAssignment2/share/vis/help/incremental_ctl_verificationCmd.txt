@@ -1,0 +1,163 @@
+
+  incremental_ctl_verification - Verify a set of CTL formulas by means of an
+  incremental model checking algorithm.
+     _________________________________________________________________
+
+   incremental_ctl_verification  [-D  <number>] [-e] [-h] [-n] \ [-s] [-t
+   <seconds>] [-v <number>] [-V <number>] [-x] <ctlfile>
+
+   Like  model_check,  incremental_ctl_verification verifies a set of CTL
+   formulas. It uses a system of abstraction and incremental refinement that
+   works  for  all  of  (fair)CTL,  using over and underapproximations as
+   appropriate. See [1,2] for details.
+
+   Incremental_ctl_verification (also known as Abs or Trasgo) works especially
+   well on large systems on which mc is too slow or runs out of memory. Unlike
+   amc, it can handle full CTL, not just the universal or existential subsets
+   of it. Also, fairness is supported with this command, although it tends to
+   be inefficient. Support for the mu-calculus is not yet implemented.
+
+   Before using incremental_ctl_verification, a flattened hierarchy should be
+   present.  See  `help  init`.  Using dynamic variable reordering may be
+   beneficial on large systems. See `help dynamic_var_ordering`.
+
+   Fairness constraints can be applied using `read_fairness', as with mc. When
+   using incremental verification with fairness, there is no check for unfair
+   initial states. Please be aware that if there are no fair initial states,
+   all formulas starting with "A" will be trivially true. Mc will tell you
+   whether you have fair initial states.
+
+   A typical use would be
+   incremental_ctl_verification -D2 <ctl_file>
+
+   For every formula, incremental verification will report whether it is valid
+   or invalid, or it returns an inconclusive result. A formula is valid iff it
+   holds for all initial states. An error trace is not provided. For the people
+   who are used to mc: The -r option is not supported, incremental verification
+   always reduces the fsm with respect to individual formulas. The -c option is
+   not supported either. There is no sharing of subformulas between different
+   formulas.
+
+   Command options:
+
+   -D <number>
+          Specify extent to which don't cares are used to simplify the MDDs.
+
+          + 0: No Don't Cares used.
+          + 1: Use reachability information to compute the don't-care set.
+            Reachability is performed by formula. This is different from mc,
+            where reachability is performed only once.
+          + 2:  Use reachability information, and minimize the transition
+            relation  with  respect  to  the  `frontier  set'  (aggresive
+            minimization).
+
+          The equivalent of mc -D3 is not implemented.
+
+   -e
+          Compute the set of fair states (those satisfying the formula EGfair
+          TRUE) before the verification process and use the result as care set.
+          In  certain  cases this will speed up computation when fairness
+          constraints are present. In other cases it will slow it down.
+
+   -h
+          Print the command usage.
+
+   -n
+          Try to prove the negation of every formula. In some cases it may be
+          easier to prove the negation of a formula than the formula itself.
+          For systems with only one initial state, a formula is true iff its
+          negation is false. Note that for systems with multiple initial states
+          a formula and its negation can both be false.
+
+   -s
+          Print a summary of statistics after the verification.
+
+   -t <secs>
+          Time in seconds allowed to spend in the verification. The default is
+          infinity.
+
+   -v <number>
+          Specify verbosity level. Use 0 for no feedback (default), 1 for more
+          and  2  for  maximum  feedback.  This option can not be used in
+          conjunction with -V.
+
+   -V <number>
+          Mask specifying type of information to be printed out while verifying
+          the formulas. This allows for a finer control than -v. -V and -v
+          cannot be used simultaneously. The mask is given as a binary number,
+          by taking the logical or of the following binary values. One does not
+          have to convert these numbers to decimal.
+
+          1 number of primary inputs and flip-flops
+
+          10 labeled operational graph of the formulas
+
+          100 cpu-time for the computation in each vertex
+
+          1000 cubes of the function sat for each vertex
+
+          10000 cubes of the function goalSet for each vertex
+
+          100000 vertex data structure contents after evaluation
+
+          1000000 cubes in the care set for every evaluation
+
+          10000000 size of care set for every evaluation
+
+          100000000 number of states that satisfy every sub-formula
+
+          1000000000 number of overall reachable states
+
+          10000000000 cubes for every iteration of a fixed point
+
+          100000000000 size of the BDD in each iteration in a fix-point
+
+          1000000000000 labeled operational graph in dot format
+
+          10000000000000 number of envelope states
+
+          100000000000000 number of states to be refined
+
+          1000000000000000 size of the refinement operands
+
+          10000000000000000 cubes of the refinement operands
+
+          100000000000000000 Number of latches before and after simplification
+
+          1000000000000000000   report   partial  progress  (i.e.  reach,
+          EG(true),...)
+
+          10000000000000000000 Begin/End refinement process
+
+          100000000000000000000 Size of goal set
+
+          1000000000000000000000 cubes of the goal set
+
+          10000000000000000000000 Contents of vertex after refinement
+
+   -x
+          Perform the verification exactly. No approximation is done.
+
+   <ctlfile>
+          File containing the CTL formulas to be verified.
+
+   Related "set" options:
+
+   ctl_change_bracket <yes/no>
+          Vl2mv automatically converts "[]" to "<>" in node names, therefore
+          CTL parser does the same thing. However, in some cases a user does
+          not want to change node names in CTL parsing. Then, use this set
+          option by giving "no". Default is "yes".
+
+   See also commands : model_check, incremental_ctl_verification
+
+   1.  A.  Pardo  and  G.  Hachtel.  Automatic abstraction techniques for
+   propositional mu-calculus model checking. In 9th Conference on Computer
+   Aided Verification (CAV'97). Springer-Verlag. Pages 12-23, 1997.
+
+   2.  A.  Pardo and G. Hachtel. Incremental CTL model checking using BDD
+   subsetting. In 35th Design Automation Conference (DAC'98). pages 457-462,
+   1998.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

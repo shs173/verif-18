@@ -1,0 +1,15 @@
+
+  echo - merely echo the arguments
+     _________________________________________________________________
+
+   echo [-h] <args>
+
+   Echoes the arguments to standard output.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

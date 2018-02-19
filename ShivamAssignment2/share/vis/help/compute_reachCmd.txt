@@ -1,0 +1,154 @@
+
+  compute_reach - compute the set of reachable states of the FSM
+     _________________________________________________________________
+
+   compute_reach  [-d  <depthValue>]  [-f]  [-g  <file>]  [-h]  [-i]  [-r
+   <thresholdValue>] [-s <printStep>] [-t <timeOut>] [-v #] [-A #] [-D] [-F]
+
+   Compute the set of reachable states of the FSM associated with the flattened
+   network. The command build_partition_mdds (or init_verify) must have already
+   been invoked on the flattened network, before this command is called. On
+   subsequent  calls  to  compute_reach, the reachable states will not be
+   recomputed, but statistics can be printed using -v. To force recomputation
+   with a different set of options, for example a depth value with -d, use -F
+   option.
+
+   The method used for image computation is displayed by the option -v 1. To
+   change the image computation method, use the command set image_method, and
+   then  start again with the command flatten_hierarchy. The reachability
+   computation makes extensive use of image computation. There are several
+   user-settable options that can be used to affect the performance of image
+   computation. See the documentation for the set command for these options.
+
+   Command options:
+
+   -d <depthValue>
+          Perform  reachability  for  depthValue steps only - this option
+          specifies the number of unit operations (image computations) to be
+          performed in the reachability computation. The depthValue used in
+          successive calls proceeds from the previous state. For example,
+          compute_reach -d 3; compute_reach -d 4; will perform 7 steps of
+          reachability in total, the second call to compute_reach proceeding
+          from the result of the first. While using only -A 0 option (default),
+          this  additionally corresponds to the depth in the state graph,
+          starting from the initial state. For the -A 1 option, the above may
+          not be true. This option is not compatible with -A 2.
+
+   -f
+          Store the set of new states (onion rings) reached at each step of
+          reachability.  If  this flag is specified, then the computation
+          proceeds with the previously set of onion rings, if any exist (not
+          any prior computation without onion rings). This option is likely to
+          use more memory during reachability analysis. This is not compatible
+          with -A 2.
+
+   -g <hints_file>
+          Use guided search. The file hints_file contains a series of hints. A
+          hint is a formula that does not contain any temporal operators, so
+          hints_file has the same syntax as a file of invariants used for
+          check_invariant. The hints are used in the order given to change the
+          transition relation. The transition relation is conjoined with the
+          hint to yield an underapproximation of the transition relation. If
+          the hints are cleverly chosen, this may speed up the computation
+          considerably, because a search with the changed transition relation
+          may be much simpler than one with the original transition relation,
+          and results obtained can be reused, so that we may never have to do
+          an expensive search with the original relation. See also: Ravi and
+          Somenzi, Hints to accelerate symbolic traversal. CHARME'99; Bloem,
+          Ravi, and Somenzi, Efficient Decision Procedures for Model Checking
+          of Linear Time Logic Properties, CAV'99; Bloem, Ravi, and Somenzi,
+          Symbolic Guided Search for CTL Model Checking, DAC'00. Not allowed
+          with -A 2 or -i, and will only work with iwls95 or monolithic image
+          methods. The description of some options for guided search can be
+          found in the help page for print_guided_search_options.
+
+   -h
+          Print the command usage.
+
+   -i
+          This option is useful when it's not possible to build the complete
+          transition relation. Using this option, the transition relation is
+          rebuilt at every itereation using the current reached set of states
+          as  the care set. This option is not compatible with the -A > 0
+          options, the -D option and the -g option.
+
+   -r <thresholdValue>
+          Dynamic reordering (with method sift) is invoked once when the size
+          of the reachable state set reaches the threshold value.
+
+   -s <printStep>
+          At every printStep of the reachability computation, print the total
+          number  of  states  reached  thus  far, and the size of the MDD
+          representing this set.
+
+   -t <timeOut>
+          Time  allowed  to perform reachability (in seconds). Default is
+          infinity.
+
+   -v #
+          Print debug information.
+          0: (default) Nothing is printed out.
+
+          1: Print a summary of reachability analysis and some information
+          about  the  image  computation  method (see print_img_info) and
+          summarizes results of reachability:
+
+          FSM depth: the farthest reachable state
+          reachable states: the number of reachable states
+          MDD size: the size of the MDD representing the reachable states
+          analysis time: number of CPU seconds taken to compute the reachable
+          states
+
+          2: Prints the detailed information about reachability analysis. For
+          each printStep, it prints the MDD size of the reachable state set and
+          the number of states in the set.
+
+   -A #
+          This  option  allows  specification of approximate reachability
+          computation.
+
+          0:  (default) Breadth First Search. No approximate reachability
+          computation.
+
+          1: High Density Reachability Analysis (HD). Computes reachable states
+          in a manner that keeps BDD sizes under control. May be faster than
+          BFS in some cases. For larger circuits, this option should compute
+          more reachable states. For help on controlling options for HD, look
+          up help on the command: print_hd_options [1]print_hd_options. Refer
+          to Ravi and Somenzi, ICCAD95. This option is available only when VIS
+          is linked with the CUDD package.
+
+          2.   Approximate   Reachability   Don't  Cares(ARDC).  Computes
+          over-approximate reachable states. For help on controlling options
+          for  ARDC,  look  up  help  on  the command: print_ardc_options
+          [2]print_ardc_options. Refer Moon's paper, ICCAD98 and 2 papers by
+          Cho et al, December TCAD96: one is for State Space Decomposition and
+          the other is for Approximate FSM Traversal. The options -d, -g and -f
+          are not compatible with this option.
+
+   -D
+          First compute an overapproximation to the reachable states. Minimize
+          transition relation using this approximation, and then compute the
+          set of reachable states exactly. This may accelerate reachability
+          analysis.  Refer  to  the paper by Moon et al, ICCAD98. The BDD
+          minimizing method can be chosen by using "set image_minimize_method "
+          [3]set. This option is incompatible with -i.
+
+   -F
+          Force to recompute reachable states.
+
+   Related "set" options:
+
+   rch_simulate <#>
+          The set option can be used to set this flag rch_simulate to specify
+          the number of random vectors to be simulated. Default value for this
+          number is 0.
+            __________________________________________________________
+
+          Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/print_hd_optionsCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/html/print_ardc_optionsCmd.html
+   3. file://localhost/projects/development/hsv/vis/common/doc/html/setCmd.html

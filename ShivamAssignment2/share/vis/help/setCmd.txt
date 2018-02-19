@@ -1,0 +1,215 @@
+
+  set - set an environment variable
+     _________________________________________________________________
+
+   set [-h] [<name>] [<value>]
+
+   A variable environment is maintained by the command interpreter. The "set"
+   command sets a variable to a particular value, and the "unset" command
+   removes the definition of a variable. If "set" is given no arguments, it
+   prints the current value of all variables.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   <name>
+          Variable name. Cannot contain '.'
+
+   <value>
+          Value to be assigned to the variable.
+
+   Interpolation  of variables is allowed when using the set command. The
+   variables  are referred to with the prefix of '$'. So for example, the
+   following can be done to check the value of a set variable:
+   vis> set foo bar
+   vis> echo $foo
+   bar
+   The last line "bar" will the output produced by vis.
+
+   Variables can be extended by using the character ':' to concatenate values.
+   For example :
+   vis> set foo bar
+   vis> set foo $foo:foobar
+   vis> echo $foo
+   bar:foobar
+   The variable foo is extended with the value foobar .
+
+   Whitespace  characters may be present within quotes. However, variable
+   interpolation lays the restriction that the characters ':' and '/' may not
+   be used within quotes. This is to allow for recursive interpolation. So for
+   example, the following is allowed
+   vis> set "foo bar" this
+   vis> echo $"foo bar"
+   this
+   The last line will be the output produced by vis.
+   But  in  the  following, the value of the variable foo/bar will not be
+   interpreted correctly:
+
+   vis> set "foo/bar" this
+   vis> echo $"foo/bar"
+   foo/bar
+   If a variable is not set by the "set" command, then the variable is returned
+   unchanged.
+
+   Different commands use environment information for different purposes. The
+   command interpreter makes use of the following parameters:
+
+   autoexec
+          Defines a command string to be automatically executed after every
+          command processed by the command interpreter. This is useful for
+          things like timing commands, or tracing the progress of optimization.
+
+   open_path
+          "open_path" (in analogy to the shell-variable PATH) is a list of
+          colon-separated strings giving directories to be searched whenever a
+          file is opened for read. Typically the current directory (.) is first
+          in   this   list.   The   standard  system  library  (typically
+          $VIS_LIBRARY_PATH) is always implicitly appended to the current path.
+          This provides a convenient short-hand mechanism for reaching standard
+          library files.
+
+   vis_stderr 
+          Standard error (normally stderr) can be re-directed to a file by
+          setting the variable vis_stderr.
+
+   vis_stdout
+          Standard output (normally stdout) can be re-directed to a file by
+          setting the variable vis_stdout.
+
+   Building MDDs for the network makes use of following setting:
+
+   partition_method
+          This  parameter  is  used to select the method for creating the
+          partition.  The  vertices  of  a  partition  correspond  to the
+          combinational inputs, combinational outputs, and any intermediate
+          nodes used. Each vertex has a multi-valued function (represented by
+          MDDs) expressing the function of the corresponding network node in
+          terms of the partition vertices in its transitive fanin. Hence, the
+          MDDs of the partition represent a partial collapsing of the network.
+          The possible values of partition_method are:
+
+        inout
+                Expresses  the  combinational  outputs  in  terms  of the
+                combinational inputs. This is the default partitioning method.
+
+        total
+                The partition built is isomorphic to the combinational part of
+                the network. The function of each node is expressed in terms of
+                its immediate fanins.
+
+        frontier
+                The partition built contains the combinational part of the
+                network as well as vertices corresponding to some intermediate
+                nodes. These vertices are generated to control the MDD sizes of
+                the combinational outputs. The number of intermediate variables
+                can be controlled by the parameter "partition_threshold". The
+                method "inout" and "total" are special cases of this method
+                (corresponding to a partition_threshold of infinity and 0
+                respectively).
+
+   partition_threshold
+          This parameter is used in conjuction with the selection of "frontier"
+          as partition method. This determines the threshold at which a new MDD
+          variable is created in the partition.
+
+   Image computation makes use of following settings:
+
+   image_method
+          The "image_method" parameter is used to control the image method used
+          in various symbolic analysis techniques. Currently, two image methods
+          are  implemented. Use "set image_method <method>" to choose the
+          appropriate method.
+
+        monolithic
+                This is the most naive approach possible. However, this method
+                is not suitable for circuits with more than 20 latches.
+
+        tfm
+                This is the pure transition function method. This method is
+                supposed not to be used in general fixpoint computations.
+                Approximate  traversal  is an application of this method.
+                Basically this method is made as a part of hybrid method. For
+                more  detailed options, see the help of print_tfm_options
+                command.
+
+        hybrid
+                This is a hybrid method combining transition relation and
+                function  methods. Transition relation method is based on
+                conjunction  of  partitioned transition relation, whereas
+                transition function method is based on splitting on an input or
+                output variable recursively. The hybrid method choose either
+                splitting or conjunction at each recursion dynamically using
+                the dependence matrix. For details, refer to the paper "To
+                split or to Conjoin: The Question in Image Computation" by
+                In-Ho Moon, James Kukula, Kavita Ravi, and Fabio Somenzi,
+                DAC'00.  Also  for more detailed options, see the help of
+                print_hybrid_options command.
+
+        iwls95
+                This technique is based on the early variable quantification
+                and  related  heuristics of Ranjan, et al. "Efficient BDD
+                Algorithms for FSM Synthesis and Verification", IWLS 1995.
+                First,  from  the  given multivalued functions, bit level
+                relations are created. These relations are then clustered based
+                on   the   value   of   threshold   value  controlled  by
+                image_cluster_size parameter. Next the relations are ordered
+                for early variable quantification. This ordering is controlled
+                by the parameters image_W1, image_W2, image_W3, and image_W4.
+
+        mlp
+                This technique is based on minimizing the variable lifetime in
+                the conjunctions of the partitioned transition relation. The
+                method  is called MLP (Minimal Lifetime Permutation). For
+                details, refer to the paper "Border-Block Triangular Form and
+                Conjunction Schedule in Image Computation" by In-Ho Moon, Gary
+                Hachtel, and Fabio Somenzi, FMCAD'00. Also for more detailed
+                options, see the help of print_mlp_options command.
+
+   image_farside_method
+          This parameter is used in conjunction with the selection of iwls95,
+          mlp,  or  linear  as the image_method. When the value is 1, the
+          compositional far side image computation approach is enabled; when
+          the value is 0, this feature is disabled (default).
+
+   image_cluster_size
+          This parameter is used in conjunction with the selection of iwls95 as
+          the image_method. The value of this parameter is used as threshold
+          value for creating clusters. The default value of this parameter is
+          5000 which has been empirically proved to be an optimal value.
+
+   image_W1, image_W2, image_W3, image_W4
+          These parameters are used in conjunction with the selection of iwls95
+          as the image_method. They control the weights associated with various
+          factors in ordering the clusters. The default values are 6, 1, 1, and
+          2 respectively. For a detailed description of these parameters,
+          please refer to the paper in IWLS'95 proceedings.
+
+   image_verbosity
+          Sets the verbosity mode (0 minimum to 4 maximum), for the image
+          method iwls95.
+
+   image_minimize_method <method>
+          Sets a minimization method to minimize the transition relation or an
+          image/preimage computaion with a set of dont-care states.
+
+          Methods: 0 : restrict (default).
+
+          1 : constrain
+
+          2 : compact (currently supported by only CUDD)
+
+          3 : squeeze (currently supported by only CUDD)
+
+   scc_method <method>
+          Sets the symbolic method to enumerate strongly connected components
+          (SCCs). Symbolic SCC enumeration is the core computation in LTL and
+          fair-CTL model checking.
+
+          Methods: lockstep : the O(nlogn) time LockStep algorithm (default).
+
+          Methods: linearstep : the linear time symbolic algorithm (default).
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

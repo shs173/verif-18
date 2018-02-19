@@ -1,0 +1,140 @@
+
+  bounded_model_check - Performs a SAT-based LTL model checking on a flattened
+  network
+     _________________________________________________________________
+
+   bounded_model_check [-h] [-v <verbosity_level>] [-m <minimum_length>] [-k
+   <maximum_length>] [-s <step_value>] [-r <termination_check_step>] [-e] [-F
+   <fairness_file>] [-S <sat_solver>] [-E <encoding>] [-C <clause_type>] [-I
+   <inc_level>] [-d <dbg_level>] [-t <timeOutPeriod>] [-o <cnf_file>] [-i] [-O
+   <debug_file>] <ltl_file>
+
+   Performs  a  SAT-based LTL bounded model checking (BMC) on a flattened
+   network.  This  command  looks  for  a  counterexample  of  length k (
+   minimum_length ≤ k ≤ maximum_length). If -r is specified, this command
+   performs check for termination after each termination_check_step . If no
+   counterexample is found, this command increases k by step_value (specifies
+   by  the -s option) until a counterexample is found, the search becomes
+   intractable (timed out), or k reaches a bound (determine by the check for
+   termination),  and then we conclude that the LTL property passes. This
+   command implements the basic encoding of Bounded Model Checking (BMC) as
+   descibed in the paper "Symbolic Model Checking without BDDs". However, the
+   -E option can be used to select other encoding scheme. We also applied some
+   of the improvements in the BMC encoding described in the paper "Improving
+   the Encoding of LTL Model Checking into SAT". To prove that an LTL property
+   passes, we implement the termination methods that are descirebed in the
+   papers "Checking Safety Properties Using Induction and a SAT-Solver" and
+   "Proving More Properties with Bounded Model Checking". Before calling this
+   command, the user should have initialized the design by calling the command
+   [1]flatten_hierarchy. If the user uses the -r option and the LTL property is
+   a general LTL property, the command [2]build_partition_maigs must be called.
+   The aig graph must be built by calling the command [3]build_partition_mdds
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -m <minimum_length>
+          Minimum length of counterexample to be checked (default is 0).
+
+   -k <maximum_length>
+          Maximum length of counterexample to be checked (default is 1).
+
+   -s <step_value>
+          Incrementing value of counterexample length (default is 1).
+
+   -r <termination_check_step>
+          Check for termination for each termination_check_step (default is 0).
+          0 means don't check for termination.
+
+   -e
+          Activate early termination check. Check if there is no simple path
+          starts from an initial state. Valid only for general LTL and safety
+          properties. Must be used with -r option.
+
+   -S <sat_solver>
+          Specify SAT solver
+          sat_solver must be one of the following:
+
+          0: CirCUs (Default)
+
+          1: zChaff
+
+   -E <encoding>
+          Specify encoding scheme
+          encoding must be one of the following:
+
+          0: The original BMC encoding (Default)
+
+          1: SNF encoding
+
+          2: Fixpoint encoding
+
+   -C <clause_type>
+          Specify clause type
+          encoding must be one of the following:
+
+          0: Apply CirCUs SAT solver on circuit (Default)
+
+          1: Apply SAT solver on CNF generated form circuit
+
+          2: Apply SAT solver on CNF
+
+   -I <inc_level>
+          Specify increment sat solver type
+          encoding must be one of the following:
+
+          1: Trace Objective (Default)
+
+          2: Distill
+
+          3: Trace Objective + Distill
+
+   -F <fairness_file>
+          Read fairness constraints from <fairness_file>. Each formula in the
+          file is a condition that must hold infinitely often on a fair path.
+
+   -o <cnf_file> Save CNF formula in <cnf_file>
+   -O <debug_file> Save counterexample to <debug_file>
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   -v <verbosity_level>
+          Specify verbosity level. This sets the amount of feedback on CPU
+          usage and code status.
+          verbosity_level must be one of the following:
+
+          0: No feedback provided. This is the default.
+
+          1: Feedback on code location.
+
+          2: Feedback on code location and CPU usage.
+
+   -d <dbg_level>
+          Specify the amount of debugging performed when the BMC models check
+          the LTL formula.
+
+          dbg_level must be one of the following:
+
+          0: No debugging performed. dbg_level=0 is the default.
+
+          1: Debugging with minimal output: generate counter-example if the LTL
+          formula fails and the counterexample length.
+
+   -i
+          Print  input  values  causing transitions between states during
+          debugging.
+
+   <ltl_file>
+          File containing LTL formulae to be checked.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/flatten_hierarchyCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_maigsCmd.html
+   3. file://localhost/projects/development/hsv/vis/common/doc/html/build_partition_mddsCmd.html

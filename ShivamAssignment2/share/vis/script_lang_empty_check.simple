@@ -1,0 +1,29 @@
+# Script file for checking the language emptiness of a system under a
+# set of fairness constraints.
+
+# Author: Rajeev K. Ranjan
+
+# Usage: 
+# After reading in the design using one of 
+# "read_blif, read_blif_mv, or read_verilog" commands, 
+# on VIS prompt type:  
+# source script_lang_empty_check.simple  <fairness_file>
+
+# Trouble shooting:
+# i) Invoke the script exactly the way prescribed (no option to "source")
+# ii) The script tries to create a file in the current directory. Make sure
+#     that the directory is writable by you.
+
+### Script starts here #################################################
+
+  # Source the generic script file
+
+source script_generic.simple 
+
+  # Read the fairness constraints
+
+read_fairness %:2		
+
+  # Finally invoke the language emptiness check
+
+lang_empty -d 0 

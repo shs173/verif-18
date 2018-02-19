@@ -1,0 +1,16 @@
+
+  print_models - list all the models and their statistics
+     _________________________________________________________________
+
+   print_models [-h]
+
+   Lists all the models and prints information about the number of variables,
+   tables, latches etc. in them.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,274 @@
+#!/usr/local/bin/perl
+#
+# Script to read a file specifying the packages to which every function belongs
+# in VIS and then process the file output of purify and create a table of
+# memory usage per package.
+#
+# Abelardo Pardo <abel@vlsi.colorado.edu>
+#
+# Revision: [$Id: memoryaccount,v 1.8 1997/01/23 03:50:43 hsv Exp $]
+
+require 5.001;
+use Getopt::Long;
+
+$version = "1.8";
+
+# Define option and default variables
+#
+$opt_f = 0;
+$opt_h = 0;
+$opt_p = 0;
+$opt_v = 0;
+$opt_u = 0;
+
+# Read the options
+# 
+$optionResult = GetOptions("f=s","h","m=s","p","u=s","v");
+
+# Read the result of the options
+#
+if ($opt_f) {
+    $file = $opt_f;
+}
+else {
+    $file = "purify.log";
+}
+
+# Print the help message if required
+#
+if ($opt_h || !$optionResult) {
+    goto usage;
+}
+
+if ($opt_u) {
+    if ($opt_u eq "k") {
+	$unit = "Kbytes";
+	$factor = 1000.0;
+	$precission = 2;
+    }
+    if ($opt_u eq "m") {
+	$unit = "Mbytes";
+	$factor = 1000000.0;
+        $precission = 2;
+    }
+    if ($opt_u eq "g") {
+	$unit = "Gbytes";
+	$factor = 1000000000.0;
+	$precission = 2;
+    }
+    if ($opt_u eq "b") {
+	$unit = "bytes";
+	$factor = 1.0;
+	$precission = 0;
+    }
+}
+else {
+    $unit = "bytes";
+    $factor = 1.0;
+    $precission = 0;
+}
+
+# Print the version if required
+#
+if ($opt_v) {
+    print <<ENDOFMESSAGE;
+$0 -- Version: $version -- by Abelardo Pardo <abel\@vlsi.colorado.edu>
+ENDOFMESSAGE
+    exit;
+}
+
+# Initial value of certain variables 
+#
+$detectedmiu = 0;
+$totalchunks = 0;
+$totalmemory = 0;
+
+# Read in the function map files
+#
+
+if ($#ARGV == -1) {
+    push(@ARGV, "./.fmap");
+}
+
+foreach $filename (@ARGV) {
+    if (open(INPUT, $filename)) {
+        while (<INPUT>) {
+            @fields = split(/\s/,$_);
+            $func2pkg{$fields[2]} = $fields[0];
+	    $total{$fields[0]} = 0;
+	}
+	close(INPUT);
+    }
+}
+
+# Open the input file
+#
+open(INPUT, $file) || die "Unable to open file $file\n";
+while (<INPUT>) {
+    chop;
+
+    # Detect the version of purify being executed
+    if (/\s\s\*\sPurify\s([0-9\.]+)\s/) {
+	$purifyVersion = $1;
+	print "Memory Map of $pname at $pdate obtained with Purify $1\n";
+	if ($purifyVersion eq "3.2") {
+	    $totalMemoryExp = "^Memory\\sin\\-use:\\s([0-9]+)\\sbytes";
+	}
+	if ($purifyVersion eq "4.0.1") {
+	    $totalMemoryExp = "^New\\smemory\\sin\\-use:\\s([0-9]+)\\sbytes";
+	}
+    }
+
+    # Detect the first line telling when this was executed
+    if (/^\*\*\*\*\s\sPurify\sinstrumented\s(.+)\s\((.+)\sat\s(.+)\)/) {
+	$pname = $2;
+	$pdate = $3;
+    }
+
+    # Detecting when the data structure has to be flushed
+    if (/^Purify:\sSearching\sfor\sall\smemory\sin\-use\.\.\.$/) {
+	foreach $name (keys %total) {
+	    $total{$name} = 0;
+	}
+	$parsing = 1;
+    }
+
+    if ($parsing) {
+	# Detect the line saying how much memory in use is visible
+	if (/^Memory\sin\-use:\s([0-9]+)\sbytes\s+\(([0-9\.]+)%\s.+\)/) {
+	    $memInUse = $2;
+	}
+	
+	# If we are inside a MIU statement 
+	if ($detectedmiu == 1) {
+	    
+	    # Detect end of MIU statement
+	    if ($_ eq "") {
+		$detectedmiu = 0;
+		if ($notallocatedyet == 1) {
+		    $total{"unclaimed"} += $portioninuse;
+		}
+	    }
+	    else {
+		
+		# Obtain the function name of the allocation
+		if ($notallocatedyet == 1) {
+		    if (/\s+([a-zA-Z0-9_]+)\s+\[(.+)\]/) {
+			$function = $1;
+			if (defined($func2pkg{$function})) {
+			    $pkg = $func2pkg{$function};
+			    $total{$pkg} += $portioninuse;
+			    $notallocatedyet = 0;
+			}
+		    }
+		}
+	    }
+	}
+	
+	if (/^MIU:\s([0-9]+)\sbytes/) {
+	    $detectedmiu = 1;
+	    $portioninuse = $1;
+	    $notallocatedyet = 1;
+	}
+	
+	if (/^\s\s\s\s\sTotal\sAllocated\s+([0-9]+)\s+([0-9]+)/) {
+	    $totalchunks = $1;
+	    $totalmemory = $2;
+	    $parsing = 0;
+	}
+    }
+}
+
+close(INPUT);
+
+if ($memInUse ne "100") {
+    print "Warning: The program is using $memInUse% of its allocated memory\n";
+}
+print "Profile of the memory currently in use:\n";
+foreach $name (sort keys %total) {
+    if ($opt_p || $total{$name} != 0) {
+	$tmemoryunits = $total{$name}/$factor;
+	$percentage = 100.0*$total{$name}/$totalmemory;
+	printf "%9s :  %12.${precission}f %s %5.2f %%\n", 
+	       $name, $tmemoryunits, $unit, $percentage;
+    }
+}
+print "-------------------------------------------------------------------------------\n";
+
+if ($totalchunks == 0) {
+    print "No information found in file $file\n";
+    exit;
+}
+
+$memoryunits = $totalmemory/$factor;
+$memoryperchunk = $totalmemory/$totalchunks;
+printf "Total Memory Allocated = %12.${precission}f %s\n", $memoryunits, $unit;
+print "Memory allocated in $totalchunks portions. ";
+printf "Average %12.2f bytes per portion\n", $memoryperchunk;
+
+exit;
+
+usage:
+    print <<ENDOFMESSAGE;
+
+$0 - Program to analyze and collect statistics about the memory usage of VIS.
+    This is how the filter works. It reads a file mapping function names to
+    package names. The filename to read may be provided in the command
+    line. This map may be created with the script "createfunctionmap". The
+    application first reads in that function map. If a function is mapped in
+    more than one file, the last one read in the one that prevails (for that
+    reason it is recommended to read in first the global map and then the map
+    in the user area). After that, it opens the file "purify.log" (this value
+    may be overwritten with the "-f" option). It parses this file to detect the
+    beginning and end of the purify dump of the memory in use. Among other
+    things, the parsing analyzes every MIU (Memory in use) statement. The MIU
+    statement gives the call stack whenever a memory allocation of a portion
+    that is still in use is performed. The script parses this call stack
+    searching for function names. When a function name that is present in the
+    map previously read is found, that memory is added to a counter for the
+    package to which that function belongs. Since purify prints a finite number
+    of functions in this call stack, it might happen that none of the function
+    names in that stack is in the map. In that case, the memory allocated is
+    accounted to the "unclaimed" category.  If while using this script, the
+    unclaimed category represents a significant portion of the memory in use,
+    there are two things that can be done: Either the length of the call stack
+    is increased by using the "-chain-length" option in purify whose default is
+    6, or more function names are included in the map file, such that the
+    "unclaimed memory" situation does not occur that often.  When the script is
+    done parsing the purify file, it prints a summary of the memory allocated
+    to each and every package present in its map. Purify makes a distinction
+    between the memory in use and the allocated memory. The former is the
+    memory that is still accessible to the program. The latter is the total
+    memory allocated to the program. If the memory being used by the program is
+    not the total memory allocated by the program, the script issues a
+    warning. This situation means that there is a portion of the memory that
+    cannot be accessed and therefore leaked. Please refer to the purify user's
+    guide Chapter 14, "Purify API" for more information about the type of
+    information provided by purify.
+
+Usage:
+  $0 [-f <filename>] [-h] [-p] [-v] [-u <units>] filenames
+
+Options:
+  -f <filename>     File to read the dump from. The default is "purify.log"
+  -h                Print this message
+  -p                Print also the packages that do not use any memory.
+  -v                Print the version
+  -u <units>        Units to print the memory usage in. It may be "b" for bytes
+                    "k" for kilobytes, "m" for megabytes and "g" for gigabytes.
+		    The default is bytes.
+  filenames         Files containing the function map to be read. Default is
+                    ./.fmap 
+
+Bugs:
+  This script has been tested for purify versions 3.2 and 4.0.1. Since the
+  parsing is sensitive to the messages written in the dump file, a new version
+  of purify might have different messages that are not matched in the
+  script. If this situation arises, chances are the results are completely
+  bogus. 
+
+Author: Abelardo Pardo <abel\@vlsi.colorado.edu>
+
+
+ENDOFMESSAGE
+    exit;

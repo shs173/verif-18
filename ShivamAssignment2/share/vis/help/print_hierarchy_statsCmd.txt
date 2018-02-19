@@ -1,0 +1,19 @@
+
+  print_hierarchy_stats - print the statistics of the current node
+     _________________________________________________________________
+
+   print_hierarchy_stats [-h] [-R]
+
+   Prints the statistics of the current node. Note that it is not necessary to
+   invoke flatten_hierarchy first to create a network.
+
+   Command options:
+
+   -h
+          Print the command usage
+
+   -R
+          Print statistics for nodes recursively all the way down to leaves.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,178 @@
+
+  static_order - order the MDD variables of the flattened network
+     _________________________________________________________________
+
+   static_order [-a] [-h] [-n <method>] [-o <type>] [-r <method>] -s <type> [-t
+   <timeOut>] [-v #] <file>
+
+   Order the MDD variables of the flattened network. MDD variables must be
+   created before MDDs can be built. Networks with combinational cycles cannot
+   be  ordered. If the MDD variables have already been ordered, then this
+   command does nothing. To undo the current ordering, reinvoke the command
+   flatten_hierarchy.
+
+   Command options:
+
+   -a
+          Order each next state variable immediately following the variables in
+          the support of the corresponding next state function. By default,
+          each  next  state variable is placed immeadiately following the
+          corresponding  present  state  variable.  It  has been observed
+          experimentally that ordering the NS variable after the PS variable is
+          almost always better; however, as a last b resort, you might want to
+          try this option.
+
+          Unless the -a flag is set, the PS and NS variables corresponding to
+          latches are grouped together and cannot be separated by dynamic
+          reordering. (This is done even when the ordering is read from a file
+          - adjacent PS/NS vars in the file are grouped).
+
+   -h
+          Print the command usage.
+
+   -n <method>
+          Specify which node ordering method to use. Node ordering is the
+          process of computing a total ordering on all the network nodes. This
+          ordering is then projected onto the set of nodes specified by -o
+          type. In the complexity measures below, n is the number of network
+          nodes, E is the number of network edges, and k is the number of
+          latches. "Method" must be one of the following:
+
+          interleave: (default) Uses Algorithm 2 of Fujii et al., "Interleaving
+          Based  Variable  Ordering  Methods  for OBDDs", ICCAD 1993. The
+          complexity is O(E+nlog(n)).
+
+          append: Uses the algorithm of Malik, et al. "Logic Verification using
+          Binary Decision Diagrams in a Logic Synthesis Environment," ICCAD,
+          1988. Nodes are visited in DFS order, and appended to a global order
+          list in the order they are visited. The fanins of a node are visited
+          in order of decreasing depth. The roots of the DFS are visited in the
+          order determined by the -r method. The complexity is O(E+nlog(n)).
+
+          merge_left:  Uses  an  algorithm  alluded  to  in Fujii et al.,
+          "Interleaving Based Variable Ordering Methods for OBDDs", ICCAD 1993.
+          Nodes are visited in DFS order. At a given node g, its fanins are
+          visited in order of decreasing depth. For each fanin fi, a total
+          order is computed for all the nodes in the transitive fanin (TFI) of
+          fi, including fi itself. This ordering is merged into the combined
+          ordering from fanins of higher priority. After processing all of the
+          fanins,  the  result is a total ordering on all TFI nodes of g.
+          Finally,  g is appended to the end of this ordering, yielding a
+          topological ordering. For example if the ordering for f1 is list1 =
+          (a,b,d,f1) and for f2 is list2=(c,d,e,f2), and f1 has greater depth
+          than f2, then the ordering for g is (c,a,b,d,e,f2,f1,g). The merge is
+          done by inserting into list1 those nodes in list2 not already in
+          list1, in such a way that the inserted nodes remain as close as
+          possible to their left neighbors in list2 ("insert as far left as
+          possible"). The roots of the DFS are merged in the order determined
+          by -r method. The complexity is O(n^2) (currently, there is a bug
+          which causes more memory to be consumed than necessary).
+
+          merge_right: Same as merge_left, except that the merge is done in
+          such a way that the inserted nodes remain as close as possible to
+          their right neighbors in list2 ("insert as far right as possible").
+          For the example above, the ordering for g is (a,b,c,d,f1,e,f2,g). It
+          has  been  observed  experimentally that neither merge_left nor
+          merge_right  is  superior  to  the other; there are cases where
+          verification times out with merge_left but not merge_right, and vice
+          versa.
+
+   -o <type>
+          Specify the network nodes for which MDD variables should be created.
+          Type can be one of the following:
+
+          all: Order all the nodes of the network. This is normally not used.
+
+          input_and_latch: (default) Order the primary inputs, pseudo inputs,
+          latches, and next state variables. This is the minimum set of nodes
+          that need to be ordered to perform operations on FSMs (e.g. model
+          checking, reachability). For purely combinational circuits, just the
+          primary and pseudo inputs are ordered.
+
+   -r <method>
+          Specify which root ordering method to use. The "roots" of a network
+          refer to the roots of the cones of logic driving the combinational
+          outputs (data latch inputs, initial state latch inputs, and primary
+          outputs) of a network. Root ordering is used to determine in which
+          order to visit the roots of the network for the DFS carried out in
+          node ordering (see -n). "Method" must be one of the following:
+
+          depth: (default for 30 or more latches) Roots are ordered based on
+          logic depth (i.e. longest path to a combinational input). Greater
+          depth roots appear earlier in the ordering. All data latch inputs
+          appear before all other combinational outputs. The complexity is
+          O(E+nlog(n)).  It has been observed experimentally that mincomm
+          produces superior orderings to depth. However, the complexity of the
+          mincomm  algorithm is such that it cannot produce orderings for
+          designs  with more than a hundred or so latches. Hence, for big
+          designs, use depth, followed optionally by dynamic_var_ordering.
+
+          mincomm: (default for less than 30 latches) Uses the algorithm of
+          Aziz, et al. "BDD Variable Ordering for Interacting Finite State
+          Machines," DAC, 1994. First, the latches are ordered to decrease a
+          communication  complexity  bound (where backward edges are more
+          expensive than forward edges) on the latch communication graph. This
+          directly gives an ordering for the data latch inputs. The remaining
+          combinational outputs are ordered after the data latch inputs, in
+          decreasing  order  of  their  depth.  The  total  complexity is
+          O(nlog(n)+E+k^3).
+
+   -s <type>
+          Used in conjunction with <file> to specify which nodes are supplied
+          in the ordering file. Type can be one of the following (there is no
+          default):
+
+          all: The ordering file supplies all the nodes of the network. The
+          ordering generated is the supplied order, projected onto the set of
+          nodes specified by -o.
+
+          input_and_latch: The ordering file supplies the primary inputs,
+          pseudo  inputs, latches, and next state variables. The ordering
+          generated  is  exactly  what  is  supplied  (in  the case of -o
+          input_and_latch). -o all is incompatible with -s input_and_latch.
+
+          next_state_node: The ordering file supplies next state variables.
+          During the ordering algorithm, the next state functions are visited
+          in the order in which their corresponding next state variables appear
+          in the file. The order of the next state variables in the ordering
+          generated is not necessarily maintained.
+
+          partial: The ordering file supplies an arbitrary subset of nodes of
+          the network. The ordering algorithm works by finding a total ordering
+          on all the nodes (independent of the ordering supplied), then merging
+          the computed order into the supplied order (maintaining the relative
+          order of the supplied order), and then projecting the resulting
+          ordering onto the set of nodes specified by -o.
+
+   -t <timeOut>
+          Time in seconds allowed to perform static ordering. If the flattened
+          network has more than a couple hundred latches and you are using
+          option -r mincomm, then you might want to set a timeOut to limit the
+          allowed time. The default is no limit.
+
+   -v #
+          Print debug information.
+          0 Nothing is printed out. This is the default.
+
+          >=  1 Prints the nodes read from the input file (satisfying the
+          supplied order type); prints the root order used for exploring the
+          network.
+
+          >= 2 Prints the depth of nodes.
+
+          >= 3 Prints the ordering computed at each node.
+
+   <file>
+          A file containing names of network nodes, used to specify a variable
+          ordering. The name of a node is the full hierarchical path name,
+          starting from the current hierarchical node. A node should appear at
+          most once in the file. Each node name should appear at the beginning
+          of a new line, with no white space preceeding it. The end of a node
+          name is marked by white space, and any other text on the rest of the
+          line  is  ignored. Any line starting with "#" or white space is
+          ignored. See write_order for a sample file. Note that the variable
+          ordering  cannot  be specified at the bit-level; it can only be
+          specified at the multi-valued variable level.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

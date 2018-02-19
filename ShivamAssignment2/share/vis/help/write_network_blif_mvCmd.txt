@@ -1,0 +1,21 @@
+
+  write_network_blif_mv - write a blif-MV description of the flattened network
+     _________________________________________________________________
+
+   write_network_blif_mv [-h] [-p] <file_name>
+
+   Write a file in Blif-MV format describing the network.
+
+   If no argument is specified on the command line, the description is written
+   to the vis standard output.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -p
+          Promote pseudo inputs to primary inputs.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,225 @@
+
+  write_blif - determinize, encode and write an hnode to a blif file
+     _________________________________________________________________
+
+   write_blif   [-c]   [-l]   [-e  <encoding_file_name>]  [-R]  [-h]  [-v
+   <verbosity_value>] [<file>]
+
+   Encodes, determinizes, and writes all tables in the current hnode to a BLIF
+   file. With the '-l' or '-c' options, or when 'write_blif' is used with no
+   options, only the current hnode is written out as a blif file. The '-R'
+   option writes the entire hierarchy rooted at the current hnode to the blif
+   file, assuming all tables are deterministic and all variables are boolean.
+
+   Encoding the Multi-Valued Variables:
+
+   First, all multi-valued variables in the hnode are binary encoded. Each
+   multi-valued variable requires 'm' binary variables in its encoding, where m
+   =  log2(n).  Here  'n'  is  the  number of values in the domain of the
+   multi-valued variable. If variable X has n binary variables in its encoding,
+   these  are  called X0, X1, ... X. X0 is the least significant encoding
+   variable. The value i of multi-valued variable X is encoded such that X0 +
+   2^1 * X1 + ... + 2^(n-1) * X = i. After encoding, each table in the hnode is
+   written out to the blif file.
+
+   Determinizing Non-Deterministic Tables:
+
+   Non-deterministic tables are determinized by adding more binary variables to
+   a particular variable's encoding. The variable that is chosen is the one
+   that  has  the  smallest  number  of binary variables in its encoding.
+   Determinization is explained by means of an example:
+
+   Consider the BLIF-MV table, where each of a, b, and c can have 4 values.
+   Each multi-valued variable has two binary variables in its encoding. These
+   are called a0, a1, b0, b1, c0 and c1.
+
+   .model foo
+
+   .inputs a b
+
+   .outputs c
+
+   .mv a, b, c 4
+
+   .table a b ->c
+
+   2 1 (1,2)
+
+   (1,2) 1 3
+
+   .end
+
+   The first row of this table represents non-determinism, since for a given
+   assignment of input values (i.e. a=2, b=1), the output can take on two
+   values (1 or 2). To determinize this row, it is split into two rows, each
+   with a unique singleton output value. A new binary variable is added to the
+   encoding of a (or b, since in this case each of them has the same number of
+   binary variables in its encoding). The new variable a2 is given separate
+   values in each of the new rows. The resulting blif table looks like:
+
+   .model foo
+
+   .inputs a0 a1 a2 b0 b1
+
+   .outputs c0 c1
+
+   .names a0 a1 a2 b0 b1 ->c0 c1
+
+   0 1 0 1 0 1 0 (these two rows represent
+
+   0 1 1 1 0 0 1 row 1 of the MV table)
+
+   1 0 - 1 0 1 1 (these two rows represent
+
+   0 1 - 1 0 1 1 row 2 of the MV table)
+
+   .end
+
+   Note that this table is still not deterministic, since rows 1 and 4 have
+   input minterm(s) in common, but the corresponding outputs are different. To
+   resolve this, a new binary variable is added to the encoding for b (since b
+   currently  has  the smallest encoding). For the conflicting rows, this
+   variable b2 is assigned different values, and for all other rows, it is
+   assigned a '-' value. After this change, rows 1 and 4 no longer have common
+   input minterm(s). The intermediate table now looks like:
+
+   .model foo
+
+   .inputs a0 a1 a2 b0 b1 b2
+
+   .outputs c0 c1
+
+   .names a0 a1 a2 b0 b1 b2->c0 c1
+
+   0 1 0 1 0 1 1 0
+
+   0 1 1 1 0 - 0 1
+
+   1 0 - 1 0 - 1 1
+
+   0 1 - 1 0 0 1 1
+
+   .end
+
+   This process is continued until the table is determinized. In this example,
+   the final blif file looks like:
+
+   .model foo
+
+   .inputs a0 a1 a2 a3 b0 b1 b2
+
+   .outputs c0 c1
+
+   .table a0 a1 a2 a3 b0 b1 b2 ->c0 c1
+
+   0 1 0 - 1 0 1 1 0
+
+   0 1 1 1 1 0 - 0 1
+
+   1 0 - - 1 0 - 1 1
+
+   0 1 - 0 1 0 0 1 1
+
+   .end
+
+   Blif allows only single output tables, so in reality the above table is
+   split into two single output tables before being written out to the blif
+   file. The new binary variables that are thus introduced are treated as
+   primary inputs in the blif file.
+
+   We make no claim on the optimality of this process, just that it is simple.
+   It may turn out that the number of new variables is much larger than the
+   optimum one.
+
+   Interfacing Between Binary and Multi-Valued Variables:
+
+   In order for the SIS-optimized version of this file to be read back into
+   VIS, we need to re-create the corresponding multi-valued variables. For this
+   purpose, interface information (model name, input and output declarations
+   for the hnode) is written out to a special encoding file (e.g. foo.enc).
+   Additionally,  binary->multi-valued encoding tables are written to the
+   encoding file for each PO. In the above example, the binary->multi-valued
+   table for variable c looks like
+
+   .table c0 c1 -> c
+
+   0 0 0
+
+   1 0 1
+
+   0 1 2
+
+   1 1 3
+
+   and  this can be seen as a decoder of the binary variables. Similarly,
+   multi-valued->binary encoding tables are written to the encoding file for
+   each PI. The multi-valued->binary table for variable b in the above example
+   is:
+
+   .table b -> b0 b1
+
+   0 0 0
+
+   1 1 0
+
+   2 0 1
+
+   3 1 1
+
+   and this can be seen as an encoder of the multi-valued variables. Similar
+   tables are written to the encoding file for sub-circuit inputs and outputs.
+   Likewise, such tables are written out for latch inputs and outputs. This is
+   needed so that the original multi-valued latches can be reinstated while the
+   blif file is being read back into VIS. These multi-valued latch declarations
+   are written to the encoding file during the write_blif process.
+
+   The combination of this encoding file and the blif file results in a legal
+   BLIF-MV hnode description.
+
+   If  no file is specified, the blif file is written out to the standard
+   output. If the encoding file is not specified, encoding information is
+   written out to .enc.
+
+   Options:
+
+   The '-R' option writes the entire hierarchy rooted at the current hnode to
+   the blif file, first checking that all tables are deterministic and all
+   variables are boolean. Other options ('-c', '-l', or write_blif with no
+   options) only write out the current hnode. Also, when the '-R' option is
+   specified, no encoding file is written since none is needed.
+
+   Command options:
+
+   -c
+          Writes only combinational part to blif file.
+
+   -l
+          Writes out latches, making latch IOs primary outputs in the blif
+          file.
+
+   -e <encoding_file_name>
+          If set, the program writes the encoding information into this file.
+          The default is the model name for the current node extended by .enc.
+
+   -R
+          Recursively writes out the entire hierarchy rooted at the current
+          hnode to the blif file. In this sub-hierarchy, all tables must be
+          deterministic and all variables must be boolean. Either of the -c, -l
+          or -e options cannot be used together with this option.
+
+   -h
+          Prints the command usage.
+
+   -v <verbosity_value>
+          Specifies verbosity level, an integer less than 3.
+
+   <file>
+          name of blif file to be written, default is standard output.
+
+          Note  that if neither the -c or the -l options are chosen, then
+          latches are written out, without making latch IOs primary outputs in
+          the blif file. Currently the files written out using this option
+          cannot be read back into VIS.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

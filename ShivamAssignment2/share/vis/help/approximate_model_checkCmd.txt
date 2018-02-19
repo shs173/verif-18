@@ -1,0 +1,178 @@
+
+  approximate_model_check - perform ACTL model checking on an abstracted and
+  flattened network
+     _________________________________________________________________
+
+   approximate_model_check [-h] [-v <verbosity_level>] <ctl_file>
+
+   Performs  ACTL  model checking on an abstracted and flattened network.
+   Predefined  abstractions are performed prior to model checking. Before
+   calling this command, the user should have initialized the design by calling
+   the command [1]init_verify.
+
+   The command includes two dual algorithms. The user should set appropriate
+   environment  parameters  associated with the command to execute proper
+   algorithm. By default, the command makes its effort to prove whether given
+   ACTL formula is positive. To check whether the ACTL formula is negative,
+   user should set the environment parameter amc_prove_false prior to executing
+   the command. See [2]below for the environment parameters associated with
+   this command.
+
+   Properties to be verified should be provided as ACTL formulas in the file
+   <ctl_file>. The command only accepts ACTL formulas. Mixed, ECTL expressions
+   are not supported. ACTL formulas are those in which all quantifiers are
+   universal and negation is only allowed at the level of atomic propositions.
+   For the precise syntax of CTL formulas, see the [3]VIS CTL and LTL syntax
+   manual.
+
+   The command is designed to tackle the state explosion problem we encounter
+   when dealing with large and complex circuits. Based on the initial size of
+   the  group, the command constructs over- or under-approximation of the
+   transition relation of the system. A group (subsystem) is a portion of the
+   original circuit containing a subset of the latches and their next state
+   functions.   The  initial  size  of  a  group  can  be  set  with  the
+   [4]amc_sizeof_group environment variable. These initial approximations may
+   not contain every detail of the exact system. However they may contain
+   enough information to determine whether the formula is positive or negative.
+   Starting from an initial coarse approximation, the command makes its effort
+   to  prove whether given ACTL formula is positive or negative. When the
+   procedure  fails  to  prove  correctness  of  the formula with initial
+   approximations, it automatically refines the approximations. It repeats the
+   process until the algorithm produces a reliable result or the available
+   resources are exhausted.
+
+   Due to the overhead procedures, for some circuits, the exact [5]model_check
+   method may evaluate formulas faster with less resources. If any formula
+   evaluates to false, a debug trace is reported.
+
+   The command does not use fairness constraints even if they have been read
+   with the [6]read_fairness command.
+
+   Command options: 
+
+   -h
+          Print the command usage.
+
+   -v <verbosity_level>
+          Specify  verbosity  level.  verbosity_level  must be one of the
+          following:
+
+          0 : No feedback provided. This is the default.
+          1 : Some feedback.
+          2 : Lots of feedback.
+
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   <ctl_file>
+          File containing ACTL formulas to be model checked.
+
+   Environment Parameters:
+
+   Environment parameters should be set using the set command from the VIS
+   shell
+   (e.g. vis> set amc_prove_false).
+
+   amc_prove_false 
+          When the parameter is set, the command makes its effort to prove
+          whether given ACTL formula is negative. The command constructs a set
+          of under-approximations of the transition relations of the system.
+          When the formula evaluates to false, a debug trace is reported by
+          default.
+
+   amc_grouping_method <grouping method> 
+          Specifies grouping method. Grouping method is a method for grouping
+          number of latches into single subsystem. Two methods are supported.
+
+          Grouping based on hierarchy(default) : The method groups latches
+          based on the hierarchy of the system. Normally, complex circuits are
+          designed  in  multiple processes. Furthermore, processes form a
+          hierarchy. The method uses this information provided by the original
+          design. When a design described in high level description language is
+          transformed into low level BLIF format, the processes are transformed
+          into subcircuits. The method groups those latches that are within
+          same subcircuit.
+
+          Grouping based on latch dependencies(latch_dependency): The method
+          groups  those latches that are closely related. Closely related
+          latches are those who has many (transitive) connections between them.
+
+          When the parameter is not specified, the command by default uses
+          hierarchical grouping method.
+
+   amc_sizeof_group <integer value> 
+          Determines the number of latches in each group(subsystem). The
+          default value is 8. The initial size of the subsystem determines the
+          initial degree of approximations of the transition relations. There's
+          no proven rule of setting the value. Some experimental results show
+          that setting the value to about 5-20% of overall number of latches is
+          reasonable(e.g. if the system contains 100 latches set the value to
+          5-20). However, the suggested range may not work well with some
+          examples.
+
+   amc_DC_level <integer value> 
+          Specifies don't care levels. Default level is 0. Absence of the
+          parameter sets the amc_DC_level to 0.
+          amc_DC_level must be one of the following:
+
+        0: No don't cares are used. This is the default.
+
+        1: Use unreachable states as don't cares.
+
+        2: Aggressively use DC's to simplify MDD's in model checking.
+
+          Using don't cares may take more time for some examples since the
+          approximate model checker computes the reachable states for each
+          subsystem. For some large circuits it is undesirable to set don't
+          care level.
+
+   Related "set" options:
+
+   ctl_change_bracket <yes/no>
+          Vl2mv automatically converts "[]" to "<>" in node names, therefore
+          CTL parser does the same thing. However, in some cases a user does
+          not want to change node names in CTL parsing. Then, use this set
+          option by giving "no". Default is "yes".
+
+   See also commands : model_check, incremental_ctl_verification
+
+   Examples:
+   Here are some example sequences of the VIS executions using the approximate
+   model checker.
+
+   read_blif_mv abp/abp.mv
+   flatten_hierarchy
+   static_order
+   build_partition_mdds
+   set amc_sizeof_group 4
+   approximate_model_check abp/abpt.ctl
+   time
+   quit
+
+   read_blif_mv coherence/coherence.mv
+   flatten_hierarchy
+   static_order
+   build_partition_mdds
+   set amc_sizeof_group 8
+   set amc_prove_false
+   set amc_DC_level 0
+   approximate_model_check coherence/coherence2.ctl
+   time
+   quit
+
+   The algorithm used by approximate_model_check is described in detail in
+   [7]ftp://vlsi.colorado.edu/pub/iccad96.ps
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/init_verifyCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/html/approximate_model_checkCmd.html#environment
+   3. file://localhost/projects/development/hsv/vis/common/doc/ctl/ctl/ctl.html
+   4. file://localhost/projects/development/hsv/vis/common/doc/html/approximate_model_checkCmd.html#sizeofgroup
+   5. file://localhost/projects/development/hsv/vis/common/doc/html/model_checkCmd.html
+   6. file://localhost/projects/development/hsv/vis/common/doc/html/read_fairnessCmd.html
+   7. ftp://vlsi.colorado.edu/pub/iccad96.ps

@@ -1,0 +1,81 @@
+# Generic script file for creating the next state relation of a system.
+
+# Author: Rajeev K. Ranjan
+
+# Usage: 
+# After reading in the design using one of 
+# "read_blif, read_blif_mv, or read_verilog" commands, 
+# on VIS prompt type:  
+# source script_generic.simple 
+#
+# Trouble shooting:
+# i) Invoke the script exactly the way prescribed (no option to "source")
+# ii) The script tries to create a file in the current directory. Make sure
+#     that the directory is writable by you.
+
+### Script starts here #################################################
+
+  # Get rid of the aliases for the commands used in this file
+
+unalias flatten_hierarchy
+unalias static_order
+unalias build_partition_mdds
+unalias print_img_info
+unalias compute_reach
+unalias dynamic_var_ordering
+unalias write_order
+
+  # flatten the hierarchy 
+flatten_hierarchy 
+
+  # Variable ordering, assuming the default has taken care of the best
+  # setting.
+
+static_order
+
+  # Build the next state functions. Use the frontier method such that in
+  # case of very large examples, we can create intermediate variables
+  # and have a handle on the BDD size.
+
+  # We do not want  next state functions to have more than 5000 nodes.
+
+set partition_threshold 5000
+build_partition_mdds frontier
+
+  # Next create the next state relation, create clusters and
+  # order them.
+
+  # Use the method published in IWLS 95.
+  # And set the appropriate parameters
+
+set image_method iwls95
+
+  # Make clusters of no larger than 5000
+
+set image_cluster_size 5000
+
+  # This command is a clumsy way to create the next state relations.
+
+print_img_info 
+
+  # Invoke the sifting operation to reduce the BDD size
+
+dynamic_var_ordering -f sift
+
+  # Save the ordering in a file, to be used later (using a unique name).
+
+write_order __vis.order
+
+  # Restart the computation
+
+flatten_hierarchy 
+
+  # Use the variable ordering obtained after reordering.
+
+static_order -s input_and_latch __vis.order
+
+build_partition_mdds frontier
+
+  # This command is a clumsy way to create the next state relations.
+
+print_img_info 

@@ -1,0 +1,19 @@
+
+  network_sweep - sweeps the network to ensure that deterministic constants are
+  removed
+     _________________________________________________________________
+
+   network_sweep [-h][-v]
+
+   This function performs a sweep on the given Ntk_Network_t. It propagates all
+   the deterministic constant nodes, and removes all buffer nodes. It modifies
+   the network. Command options:
+
+   -h
+          Print the command usage.
+
+   -v
+          Print debug information.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

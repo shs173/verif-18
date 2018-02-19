@@ -1,0 +1,26 @@
+
+  write_blif_mv - write a blif-mv file
+     _________________________________________________________________
+
+   write_blif_mv [-h] [<file>]
+
+   Writes out the hierarchy below the current node in blif-mv format to the
+   file specified as an argument. If no argument is specified, the output is
+   available at the standard output.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   <file>
+          name of blif-mv file to be written.
+
+   For more information on blif-mv, refer to the [1]blif-mv manual.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. http://www-cad.eecs.berkeley.edu/Respep/Research/vis/doc/blifmv/blifmv/blifmv.html

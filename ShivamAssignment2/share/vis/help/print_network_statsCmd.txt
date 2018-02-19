@@ -1,0 +1,41 @@
+
+  print_network_stats - print statistics about the flattened network
+     _________________________________________________________________
+
+   print_network_stats [-h]
+
+   Prints the following statistics about the flattened network:
+
+     name: the name of the flattened network
+
+     combinational:  the  number of nodes which have a table defining the
+          function of the node (excludes pseudo inputs)
+
+     primary inputs: the number of primary input nodes of the flattened network
+
+     primary outputs: the number of primary output nodes of the flattened
+          network
+
+     latches: the number of (multi-valued) latches
+
+     pseudo inputs: the number of pseudo input nodes of the flattened network
+
+     constants: the number of combinational nodes that implement a multi-valued
+          constant
+
+     edges: the number of fanouts in the network (e.g. if the output of a node
+          is used in two places, this contributes two to the sum)
+
+   Note that flatten_hierarchy must be called before this command.
+
+   Example output:
+  small  combinational=2  pi=2  po=0  latches=1  pseudo=0  const=1  edges=4
+  
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

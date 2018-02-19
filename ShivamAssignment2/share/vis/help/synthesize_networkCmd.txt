@@ -1,0 +1,124 @@
+
+  synthesize_network - Synthesizes a network using ZDD factorization method.
+     _________________________________________________________________
+
+   synthesize_network [-d <divisor>] [-e] [-f <factoringMethod>] [-h] [-i
+   <prefix>] [-o <fileHead>] [-r <reachMethod>] [-t <timeOut>] [-v] [-A] [-O
+   <outputOrdering>] [-R <reorder>] [-T]
+
+   This command synthesizes a network to have as few literals as possible and
+   outputs a blif file and an equation file. Those files are the results of the
+   synthesis. By default, the names of the files are model_name.ml.blif and
+   model_name.eq  unless users specify the model_name explicitly using -o
+   option. But, when the output blif file is read in sis, it may have slightly
+   different  number of literals. This problem will be fixed in the later
+   version. Currently, this command can be used only with CUDD package. Designs
+   described in BLIF or BLIF-MV format can be synthesized by this command.
+   However, multiple valued variables are not supported. Hence, signals in the
+   designs described in BLIF-MV need to be restricted to binary values. There
+   are 4 divisor functions to find a good divisor of a function. Neither of
+   them consistently generates the best result. And, there are 2 factoring
+   methods: simple factoring and generic factoring. Also, neither of two always
+   does better than the other.
+
+   Command options:
+
+   -d <divisor>
+          Choose a divisor.
+
+          0 : Fast divisor. We find a divisor on a ZDD graph. As soon as any
+          shared  node(variable)  is found, the variable is returned as a
+          divisor.
+
+          1 : (default) Least occuring literal divisor. If a variable occurs
+          the least frequently(but, should be more than one) in cubes, it
+          returns the variable as a divisor.
+
+          2 : Most occuring literal divisor. If a variable occurs the most
+          frequently in cubes, it returns the variable as a divisor.
+
+          3 : Level-0 divisor. It finds a divisor that is a level-0 cokernel.
+
+   -e
+          Dump the synthesized circuit in equation format also. Default is not
+          to.
+
+   -f <factoringMethod>
+          Choose a factoring method.
+
+          0 : (default) Simple factoring. This method uses a simple recursion.
+          First, it finds a proper divisor of a function, then divide the
+          function by the divisor, then it gets a quotient and a remainder.
+          And, it does the same thing recursively for each divisor, quotient,
+          and remainder.
+
+          1 : Generic factoring. This method is quite similar to the simple
+          factoring, but it does more in terms of considering cube-free and
+          common  divisor  and literal factoring. But, it does not always
+          generate better results than the simple factoring does.
+
+   -h
+          Print the command usage.
+
+   -i <prefix>
+          Specify the prefix of internal node names. By default, the prefix is
+          "_n".
+
+   -o <fileHead>
+          Specify the output file name (without extension). By default, the
+          model name in a blif file is used.
+
+   -r <reachMethod>
+          If the network is sequential, then use unreachable states as dont
+          cares in the optimization. By default no reachability analysis is
+          performed. See -A option of command compute_reach for more details.
+          The various options are:
+
+          0 : Do not use dont cares (default).
+
+          1 : Use normal breadth first search method for reachability analysis.
+
+          2 : Use high density traversal method for reachablity analysis.
+
+          3 : Use approximate unreachable states(a subset of actual unreachable
+          states) as dont cares.
+
+   -t <timeOut>
+          Time in seconds allowed to perform synthesize_network. The default is
+          no limit.
+
+   -v
+          Print debug information.
+
+   -A
+          Allow realignment to ZDD/BDD after BDD/ZDD reordering, respectively.
+          This option is effective when only one reordering in BDD or ZDD is
+          enabled.
+
+   -O <outputOrdering>
+          Choose an output ordering method.
+
+          0 : No ordering.
+
+          1 : (default) Use support variable set of output functions.
+
+          2 : Use BDD size of output functions.
+
+   -R <reorder>
+          Allow reordering in BDD and/or ZDD.
+
+          0 or n : (default) No reordering neither in BDD nor in ZDD.
+
+          1 or b : Allows reordering only in BDD, not in ZDD.
+
+          2 or z : Allows reordering only in ZDD, not in BDD.
+
+          3 or a : Allows reordering both in BDD and in ZDD.
+
+   -T
+          Try to share more nodes during symbolic factorization. Existing
+          divisors are checked for potential reuse before extracting divisors
+          from the current boolean function.
+              ____________________________________________________
+
+                Last updated on 20120205 22h07

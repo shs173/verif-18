@@ -1,0 +1,15 @@
+
+  pwd - print out the full path of the current node from the root node
+     _________________________________________________________________
+
+   pwd [-h]
+
+   Prints out the full path of the current node from the root node.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

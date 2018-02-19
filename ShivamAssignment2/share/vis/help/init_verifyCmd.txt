@@ -1,0 +1,31 @@
+
+  init_verify - create and initialize a flattened network for verification
+     _________________________________________________________________
+
+   init_verify [-b] [-h]
+
+   This command initializes the system for verification, and is equivalent to
+   the command sequence flatten_hierarchy; static_order; build_partition_mdds.
+   If a command returns an error condition, then the sequence is aborted. After
+   init_verify has successfully executed, various commands can be invoked, like
+   model_check, compute_reach, simulate, print_network_stats, and seq_verify.
+
+   Please note that init_verify does not enable dynamic variable reordering.
+   Sometimes, though, this is needed to complete building the partitions, and
+   one has to initialize the verification by hand. Similarly, it may be wise to
+   turn on dynamic variable reordering after init, so that further commands
+   complete more easily. See the help page for dynamic_var_ordering.
+
+   Command options:
+
+   -b
+          This option has no effect any longer.
+
+   -d
+          Enable dynamic variable ordering.
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,94 @@
+
+  iterative_model_check - Perform CTL model checking on an abstracted system
+  with automatic refinement algorithm.
+     _________________________________________________________________
+
+   iterative_model_check [-h] [-x] [-t <seconds>] [-v <number>]\ [-D <number>]
+   [-r <number>] [-i <number>] \ [-p <number>] [-g <number>] <ctlfile>
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -x
+          Perform the verification exactly. No approximation is done.
+
+   -t <secs>
+          Time in seconds allowed for verification. The default is no limit.
+
+   -v <number>
+          Specify verbosity level. Use 0 for no feedback (default), 1 for more,
+          and 2 for maximum feedback.
+
+   -D <number>
+          Specify extent to which don't cares are used to simplify the MDDs.
+
+          + 0: No don't cares used. This is the default.
+          + 1: Use reachability information to compute the don't-care set.
+          + 2:  Use reachability information, and minimize the transition
+            relation  with  respect  to  the  `frontier  set'  (aggresive
+            minimization).
+          + 3: Use approximate reachability information.
+
+   -r <number>
+          Specify refinement method.
+
+          + 0:  Static  scheduling  by name sorting. Fast, easy, but less
+            accurate.
+          + 1: Static scheduling by latch affinity. Slow, but more accurate.
+            This is the default.
+
+   -i <number>
+          The number of state variables to be added for exact computation at
+          each iteration. The default is 4.
+
+   -l <number>
+          Type of lower-bound approximation method.
+
+          + 0: Take a subset of each transition sub-relation by BDD subsetting.
+          + 1: Take a subset by universal quantification. This is the default.
+
+   -p <number>
+          Type  of partition method. If 'build_partition_mdds' is already
+          invoked,  this  option  is ignored. Notice that some next state
+          functions might not be available after iterative_model_checking
+          command is performed because of this option.
+
+          + 0: Build all next state functions. Same as 'build_partition_mdds'.
+            This is the default.
+          + 1: Build the next state functions related to the formulas. Build
+            all next state functions that are necessary to prove all formulas.
+          + 2: Build the next state functions incrementally. None of next state
+            functions are removed.
+
+   -g <number>
+          Type of operational graph.
+
+          + 0: Negative Operational Graph. Good to prove a formula true.
+          + 1: Positive Operational Graph. Good to prove a formula false.
+          + 2: Mixed Operational Graph. Good to prove any formula, but it may
+            be slower. This is the default.
+
+   <ctlfile>
+          File containing the CTL formulas to be verified.
+
+   Related "set" options:
+
+   ctl_change_bracket <yes/no>
+          Vl2mv automatically converts "[]" to "<>" in node names, therefore
+          CTL parser does the same thing. However, in some cases a user does
+          not want to change node names in CTL parsing. Then, use this set
+          option by giving "no". Default is "yes".
+
+   See also commands : model_check, incremental_ctl_verification
+
+   1.  Jae-Young  Jang,  In-Ho  Moon,  and  Gary  D.  Hachtel.  Iterative
+   Abstraction-based CTL Model Checking. Design, Automation and Test in Europe
+   (DATE), 2000
+
+   2. Jae-Young Jang. Iterative Abstraction-based CTL Model Checking. Ph. D.
+   Thesis. University of Colorado, 1999.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

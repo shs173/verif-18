@@ -1,0 +1,581 @@
+# vl2mv adder64bitCLA.v 
+# version: 2.4
+# date:    12:15:34 02/19/2018 (EST)
+.model adder64bitCLA 
+# I/O ports
+.outputs s<0> s<1> s<2> s<3> s<4> s<5> s<6> s<7> s<8> s<9> s<10> s<11> s<12> s<13> s<14> s<15> s<16> s<17> s<18> s<19> s<20> s<21> s<22> s<23> s<24> s<25> s<26> s<27> s<28> s<29> s<30> s<31> s<32> s<33> s<34> s<35> s<36> s<37> s<38> s<39> s<40> s<41> s<42> s<43> s<44> s<45> s<46> s<47> s<48> s<49> s<50> s<51> s<52> s<53> s<54> s<55> s<56> s<57> s<58> s<59> s<60> s<61> s<62> s<63> 
+.inputs cin
+.inputs a<0> a<1> a<2> a<3> a<4> a<5> a<6> a<7> a<8> a<9> a<10> a<11> a<12> a<13> a<14> a<15> a<16> a<17> a<18> a<19> a<20> a<21> a<22> a<23> a<24> a<25> a<26> a<27> a<28> a<29> a<30> a<31> a<32> a<33> a<34> a<35> a<36> a<37> a<38> a<39> a<40> a<41> a<42> a<43> a<44> a<45> a<46> a<47> a<48> a<49> a<50> a<51> a<52> a<53> a<54> a<55> a<56> a<57> a<58> a<59> a<60> a<61> a<62> a<63> 
+.outputs cout
+.inputs b<0> b<1> b<2> b<3> b<4> b<5> b<6> b<7> b<8> b<9> b<10> b<11> b<12> b<13> b<14> b<15> b<16> b<17> b<18> b<19> b<20> b<21> b<22> b<23> b<24> b<25> b<26> b<27> b<28> b<29> b<30> b<31> b<32> b<33> b<34> b<35> b<36> b<37> b<38> b<39> b<40> b<41> b<42> b<43> b<44> b<45> b<46> b<47> b<48> b<49> b<50> b<51> b<52> b<53> b<54> b<55> b<56> b<57> b<58> b<59> b<60> b<61> b<62> b<63> 
+.subckt adder16bitCLA addr0 a<0>=a<0> a<1>=a<1> a<2>=a<2> a<3>=a<3> a<4>=a<4> a<5>=a<5> a<6>=a<6> a<7>=a<7> a<8>=a<8> a<9>=a<9> a<10>=a<10> a<11>=a<11> a<12>=a<12> a<13>=a<13> a<14>=a<14> a<15>=a<15>  b<0>=b<0> b<1>=b<1> b<2>=b<2> b<3>=b<3> b<4>=b<4> b<5>=b<5> b<6>=b<6> b<7>=b<7> b<8>=b<8> b<9>=b<9> b<10>=b<10> b<11>=b<11> b<12>=b<12> b<13>=b<13> b<14>=b<14> b<15>=b<15>  cin=cin  s<0>=s0<0> s<1>=s0<1> s<2>=s0<2> s<3>=s0<3> s<4>=s0<4> s<5>=s0<5> s<6>=s0<6> s<7>=s0<7> s<8>=s0<8> s<9>=s0<9> s<10>=s0<10> s<11>=s0<11> s<12>=s0<12> s<13>=s0<13> s<14>=s0<14> s<15>=s0<15>  cout=c16  
+.subckt adder16bitCLA addr1 a<0>=a<16> a<1>=a<17> a<2>=a<18> a<3>=a<19> a<4>=a<20> a<5>=a<21> a<6>=a<22> a<7>=a<23> a<8>=a<24> a<9>=a<25> a<10>=a<26> a<11>=a<27> a<12>=a<28> a<13>=a<29> a<14>=a<30> a<15>=a<31>  b<0>=b<16> b<1>=b<17> b<2>=b<18> b<3>=b<19> b<4>=b<20> b<5>=b<21> b<6>=b<22> b<7>=b<23> b<8>=b<24> b<9>=b<25> b<10>=b<26> b<11>=b<27> b<12>=b<28> b<13>=b<29> b<14>=b<30> b<15>=b<31>  cin=c16  s<0>=s1<0> s<1>=s1<1> s<2>=s1<2> s<3>=s1<3> s<4>=s1<4> s<5>=s1<5> s<6>=s1<6> s<7>=s1<7> s<8>=s1<8> s<9>=s1<9> s<10>=s1<10> s<11>=s1<11> s<12>=s1<12> s<13>=s1<13> s<14>=s1<14> s<15>=s1<15>  cout=c32  
+.subckt adder16bitCLA addr2 a<0>=a<32> a<1>=a<33> a<2>=a<34> a<3>=a<35> a<4>=a<36> a<5>=a<37> a<6>=a<38> a<7>=a<39> a<8>=a<40> a<9>=a<41> a<10>=a<42> a<11>=a<43> a<12>=a<44> a<13>=a<45> a<14>=a<46> a<15>=a<47>  b<0>=b<32> b<1>=b<33> b<2>=b<34> b<3>=b<35> b<4>=b<36> b<5>=b<37> b<6>=b<38> b<7>=b<39> b<8>=b<40> b<9>=b<41> b<10>=b<42> b<11>=b<43> b<12>=b<44> b<13>=b<45> b<14>=b<46> b<15>=b<47>  cin=c32  s<0>=s2<0> s<1>=s2<1> s<2>=s2<2> s<3>=s2<3> s<4>=s2<4> s<5>=s2<5> s<6>=s2<6> s<7>=s2<7> s<8>=s2<8> s<9>=s2<9> s<10>=s2<10> s<11>=s2<11> s<12>=s2<12> s<13>=s2<13> s<14>=s2<14> s<15>=s2<15>  cout=c48  
+.subckt adder16bitCLA addr3 a<0>=a<48> a<1>=a<49> a<2>=a<50> a<3>=a<51> a<4>=a<52> a<5>=a<53> a<6>=a<54> a<7>=a<55> a<8>=a<56> a<9>=a<57> a<10>=a<58> a<11>=a<59> a<12>=a<60> a<13>=a<61> a<14>=a<62> a<15>=a<63>  b<0>=b<48> b<1>=b<49> b<2>=b<50> b<3>=b<51> b<4>=b<52> b<5>=b<53> b<6>=b<54> b<7>=b<55> b<8>=b<56> b<9>=b<57> b<10>=b<58> b<11>=b<59> b<12>=b<60> b<13>=b<61> b<14>=b<62> b<15>=b<63>  cin=c48  s<0>=s3<0> s<1>=s3<1> s<2>=s3<2> s<3>=s3<3> s<4>=s3<4> s<5>=s3<5> s<6>=s3<6> s<7>=s3<7> s<8>=s3<8> s<9>=s3<9> s<10>=s3<10> s<11>=s3<11> s<12>=s3<12> s<13>=s3<13> s<14>=s3<14> s<15>=s3<15>  cout=cout  
+# assign s  = {s3 , s2 , s1 , s0 }
+.names s0<0> _n1<0>
+- =s0<0>
+.names s0<1> _n1<1>
+- =s0<1>
+.names s0<2> _n1<2>
+- =s0<2>
+.names s0<3> _n1<3>
+- =s0<3>
+.names s0<4> _n1<4>
+- =s0<4>
+.names s0<5> _n1<5>
+- =s0<5>
+.names s0<6> _n1<6>
+- =s0<6>
+.names s0<7> _n1<7>
+- =s0<7>
+.names s0<8> _n1<8>
+- =s0<8>
+.names s0<9> _n1<9>
+- =s0<9>
+.names s0<10> _n1<10>
+- =s0<10>
+.names s0<11> _n1<11>
+- =s0<11>
+.names s0<12> _n1<12>
+- =s0<12>
+.names s0<13> _n1<13>
+- =s0<13>
+.names s0<14> _n1<14>
+- =s0<14>
+.names s0<15> _n1<15>
+- =s0<15>
+.names s1<0> _n1<16>
+- =s1<0>
+.names s1<1> _n1<17>
+- =s1<1>
+.names s1<2> _n1<18>
+- =s1<2>
+.names s1<3> _n1<19>
+- =s1<3>
+.names s1<4> _n1<20>
+- =s1<4>
+.names s1<5> _n1<21>
+- =s1<5>
+.names s1<6> _n1<22>
+- =s1<6>
+.names s1<7> _n1<23>
+- =s1<7>
+.names s1<8> _n1<24>
+- =s1<8>
+.names s1<9> _n1<25>
+- =s1<9>
+.names s1<10> _n1<26>
+- =s1<10>
+.names s1<11> _n1<27>
+- =s1<11>
+.names s1<12> _n1<28>
+- =s1<12>
+.names s1<13> _n1<29>
+- =s1<13>
+.names s1<14> _n1<30>
+- =s1<14>
+.names s1<15> _n1<31>
+- =s1<15>
+.names s2<0> _n1<32>
+- =s2<0>
+.names s2<1> _n1<33>
+- =s2<1>
+.names s2<2> _n1<34>
+- =s2<2>
+.names s2<3> _n1<35>
+- =s2<3>
+.names s2<4> _n1<36>
+- =s2<4>
+.names s2<5> _n1<37>
+- =s2<5>
+.names s2<6> _n1<38>
+- =s2<6>
+.names s2<7> _n1<39>
+- =s2<7>
+.names s2<8> _n1<40>
+- =s2<8>
+.names s2<9> _n1<41>
+- =s2<9>
+.names s2<10> _n1<42>
+- =s2<10>
+.names s2<11> _n1<43>
+- =s2<11>
+.names s2<12> _n1<44>
+- =s2<12>
+.names s2<13> _n1<45>
+- =s2<13>
+.names s2<14> _n1<46>
+- =s2<14>
+.names s2<15> _n1<47>
+- =s2<15>
+.names s3<0> _n1<48>
+- =s3<0>
+.names s3<1> _n1<49>
+- =s3<1>
+.names s3<2> _n1<50>
+- =s3<2>
+.names s3<3> _n1<51>
+- =s3<3>
+.names s3<4> _n1<52>
+- =s3<4>
+.names s3<5> _n1<53>
+- =s3<5>
+.names s3<6> _n1<54>
+- =s3<6>
+.names s3<7> _n1<55>
+- =s3<7>
+.names s3<8> _n1<56>
+- =s3<8>
+.names s3<9> _n1<57>
+- =s3<9>
+.names s3<10> _n1<58>
+- =s3<10>
+.names s3<11> _n1<59>
+- =s3<11>
+.names s3<12> _n1<60>
+- =s3<12>
+.names s3<13> _n1<61>
+- =s3<13>
+.names s3<14> _n1<62>
+- =s3<14>
+.names s3<15> _n1<63>
+- =s3<15>
+.names _n1<0> s$raw_n0<0>
+- =_n1<0>
+.names _n1<1> s$raw_n0<1>
+- =_n1<1>
+.names _n1<2> s$raw_n0<2>
+- =_n1<2>
+.names _n1<3> s$raw_n0<3>
+- =_n1<3>
+.names _n1<4> s$raw_n0<4>
+- =_n1<4>
+.names _n1<5> s$raw_n0<5>
+- =_n1<5>
+.names _n1<6> s$raw_n0<6>
+- =_n1<6>
+.names _n1<7> s$raw_n0<7>
+- =_n1<7>
+.names _n1<8> s$raw_n0<8>
+- =_n1<8>
+.names _n1<9> s$raw_n0<9>
+- =_n1<9>
+.names _n1<10> s$raw_n0<10>
+- =_n1<10>
+.names _n1<11> s$raw_n0<11>
+- =_n1<11>
+.names _n1<12> s$raw_n0<12>
+- =_n1<12>
+.names _n1<13> s$raw_n0<13>
+- =_n1<13>
+.names _n1<14> s$raw_n0<14>
+- =_n1<14>
+.names _n1<15> s$raw_n0<15>
+- =_n1<15>
+.names _n1<16> s$raw_n0<16>
+- =_n1<16>
+.names _n1<17> s$raw_n0<17>
+- =_n1<17>
+.names _n1<18> s$raw_n0<18>
+- =_n1<18>
+.names _n1<19> s$raw_n0<19>
+- =_n1<19>
+.names _n1<20> s$raw_n0<20>
+- =_n1<20>
+.names _n1<21> s$raw_n0<21>
+- =_n1<21>
+.names _n1<22> s$raw_n0<22>
+- =_n1<22>
+.names _n1<23> s$raw_n0<23>
+- =_n1<23>
+.names _n1<24> s$raw_n0<24>
+- =_n1<24>
+.names _n1<25> s$raw_n0<25>
+- =_n1<25>
+.names _n1<26> s$raw_n0<26>
+- =_n1<26>
+.names _n1<27> s$raw_n0<27>
+- =_n1<27>
+.names _n1<28> s$raw_n0<28>
+- =_n1<28>
+.names _n1<29> s$raw_n0<29>
+- =_n1<29>
+.names _n1<30> s$raw_n0<30>
+- =_n1<30>
+.names _n1<31> s$raw_n0<31>
+- =_n1<31>
+.names _n1<32> s$raw_n0<32>
+- =_n1<32>
+.names _n1<33> s$raw_n0<33>
+- =_n1<33>
+.names _n1<34> s$raw_n0<34>
+- =_n1<34>
+.names _n1<35> s$raw_n0<35>
+- =_n1<35>
+.names _n1<36> s$raw_n0<36>
+- =_n1<36>
+.names _n1<37> s$raw_n0<37>
+- =_n1<37>
+.names _n1<38> s$raw_n0<38>
+- =_n1<38>
+.names _n1<39> s$raw_n0<39>
+- =_n1<39>
+.names _n1<40> s$raw_n0<40>
+- =_n1<40>
+.names _n1<41> s$raw_n0<41>
+- =_n1<41>
+.names _n1<42> s$raw_n0<42>
+- =_n1<42>
+.names _n1<43> s$raw_n0<43>
+- =_n1<43>
+.names _n1<44> s$raw_n0<44>
+- =_n1<44>
+.names _n1<45> s$raw_n0<45>
+- =_n1<45>
+.names _n1<46> s$raw_n0<46>
+- =_n1<46>
+.names _n1<47> s$raw_n0<47>
+- =_n1<47>
+.names _n1<48> s$raw_n0<48>
+- =_n1<48>
+.names _n1<49> s$raw_n0<49>
+- =_n1<49>
+.names _n1<50> s$raw_n0<50>
+- =_n1<50>
+.names _n1<51> s$raw_n0<51>
+- =_n1<51>
+.names _n1<52> s$raw_n0<52>
+- =_n1<52>
+.names _n1<53> s$raw_n0<53>
+- =_n1<53>
+.names _n1<54> s$raw_n0<54>
+- =_n1<54>
+.names _n1<55> s$raw_n0<55>
+- =_n1<55>
+.names _n1<56> s$raw_n0<56>
+- =_n1<56>
+.names _n1<57> s$raw_n0<57>
+- =_n1<57>
+.names _n1<58> s$raw_n0<58>
+- =_n1<58>
+.names _n1<59> s$raw_n0<59>
+- =_n1<59>
+.names _n1<60> s$raw_n0<60>
+- =_n1<60>
+.names _n1<61> s$raw_n0<61>
+- =_n1<61>
+.names _n1<62> s$raw_n0<62>
+- =_n1<62>
+.names _n1<63> s$raw_n0<63>
+- =_n1<63>
+# conflict arbitrators
+.names s$raw_n0<0>  s<0>
+- =s$raw_n0<0>
+.names s$raw_n0<1>  s<1>
+- =s$raw_n0<1>
+.names s$raw_n0<2>  s<2>
+- =s$raw_n0<2>
+.names s$raw_n0<3>  s<3>
+- =s$raw_n0<3>
+.names s$raw_n0<4>  s<4>
+- =s$raw_n0<4>
+.names s$raw_n0<5>  s<5>
+- =s$raw_n0<5>
+.names s$raw_n0<6>  s<6>
+- =s$raw_n0<6>
+.names s$raw_n0<7>  s<7>
+- =s$raw_n0<7>
+.names s$raw_n0<8>  s<8>
+- =s$raw_n0<8>
+.names s$raw_n0<9>  s<9>
+- =s$raw_n0<9>
+.names s$raw_n0<10>  s<10>
+- =s$raw_n0<10>
+.names s$raw_n0<11>  s<11>
+- =s$raw_n0<11>
+.names s$raw_n0<12>  s<12>
+- =s$raw_n0<12>
+.names s$raw_n0<13>  s<13>
+- =s$raw_n0<13>
+.names s$raw_n0<14>  s<14>
+- =s$raw_n0<14>
+.names s$raw_n0<15>  s<15>
+- =s$raw_n0<15>
+.names s$raw_n0<16>  s<16>
+- =s$raw_n0<16>
+.names s$raw_n0<17>  s<17>
+- =s$raw_n0<17>
+.names s$raw_n0<18>  s<18>
+- =s$raw_n0<18>
+.names s$raw_n0<19>  s<19>
+- =s$raw_n0<19>
+.names s$raw_n0<20>  s<20>
+- =s$raw_n0<20>
+.names s$raw_n0<21>  s<21>
+- =s$raw_n0<21>
+.names s$raw_n0<22>  s<22>
+- =s$raw_n0<22>
+.names s$raw_n0<23>  s<23>
+- =s$raw_n0<23>
+.names s$raw_n0<24>  s<24>
+- =s$raw_n0<24>
+.names s$raw_n0<25>  s<25>
+- =s$raw_n0<25>
+.names s$raw_n0<26>  s<26>
+- =s$raw_n0<26>
+.names s$raw_n0<27>  s<27>
+- =s$raw_n0<27>
+.names s$raw_n0<28>  s<28>
+- =s$raw_n0<28>
+.names s$raw_n0<29>  s<29>
+- =s$raw_n0<29>
+.names s$raw_n0<30>  s<30>
+- =s$raw_n0<30>
+.names s$raw_n0<31>  s<31>
+- =s$raw_n0<31>
+.names s$raw_n0<32>  s<32>
+- =s$raw_n0<32>
+.names s$raw_n0<33>  s<33>
+- =s$raw_n0<33>
+.names s$raw_n0<34>  s<34>
+- =s$raw_n0<34>
+.names s$raw_n0<35>  s<35>
+- =s$raw_n0<35>
+.names s$raw_n0<36>  s<36>
+- =s$raw_n0<36>
+.names s$raw_n0<37>  s<37>
+- =s$raw_n0<37>
+.names s$raw_n0<38>  s<38>
+- =s$raw_n0<38>
+.names s$raw_n0<39>  s<39>
+- =s$raw_n0<39>
+.names s$raw_n0<40>  s<40>
+- =s$raw_n0<40>
+.names s$raw_n0<41>  s<41>
+- =s$raw_n0<41>
+.names s$raw_n0<42>  s<42>
+- =s$raw_n0<42>
+.names s$raw_n0<43>  s<43>
+- =s$raw_n0<43>
+.names s$raw_n0<44>  s<44>
+- =s$raw_n0<44>
+.names s$raw_n0<45>  s<45>
+- =s$raw_n0<45>
+.names s$raw_n0<46>  s<46>
+- =s$raw_n0<46>
+.names s$raw_n0<47>  s<47>
+- =s$raw_n0<47>
+.names s$raw_n0<48>  s<48>
+- =s$raw_n0<48>
+.names s$raw_n0<49>  s<49>
+- =s$raw_n0<49>
+.names s$raw_n0<50>  s<50>
+- =s$raw_n0<50>
+.names s$raw_n0<51>  s<51>
+- =s$raw_n0<51>
+.names s$raw_n0<52>  s<52>
+- =s$raw_n0<52>
+.names s$raw_n0<53>  s<53>
+- =s$raw_n0<53>
+.names s$raw_n0<54>  s<54>
+- =s$raw_n0<54>
+.names s$raw_n0<55>  s<55>
+- =s$raw_n0<55>
+.names s$raw_n0<56>  s<56>
+- =s$raw_n0<56>
+.names s$raw_n0<57>  s<57>
+- =s$raw_n0<57>
+.names s$raw_n0<58>  s<58>
+- =s$raw_n0<58>
+.names s$raw_n0<59>  s<59>
+- =s$raw_n0<59>
+.names s$raw_n0<60>  s<60>
+- =s$raw_n0<60>
+.names s$raw_n0<61>  s<61>
+- =s$raw_n0<61>
+.names s$raw_n0<62>  s<62>
+- =s$raw_n0<62>
+.names s$raw_n0<63>  s<63>
+- =s$raw_n0<63>
+# non-blocking assignments 
+# latches
+# quasi-continuous assignment
+.end
+.model adder16bitCLA 
+# I/O ports
+.outputs s<0> s<1> s<2> s<3> s<4> s<5> s<6> s<7> s<8> s<9> s<10> s<11> s<12> s<13> s<14> s<15> 
+.inputs cin
+.inputs a<0> a<1> a<2> a<3> a<4> a<5> a<6> a<7> a<8> a<9> a<10> a<11> a<12> a<13> a<14> a<15> 
+.outputs cout
+.inputs b<0> b<1> b<2> b<3> b<4> b<5> b<6> b<7> b<8> b<9> b<10> b<11> b<12> b<13> b<14> b<15> 
+.subckt adder4bitCLA addr0 a<0>=a<0> a<1>=a<1> a<2>=a<2> a<3>=a<3>  b<0>=b<0> b<1>=b<1> b<2>=b<2> b<3>=b<3>  cin=cin  s<0>=s0<0> s<1>=s0<1> s<2>=s0<2> s<3>=s0<3>  cout=c4  
+.subckt adder4bitCLA addr1 a<0>=a<4> a<1>=a<5> a<2>=a<6> a<3>=a<7>  b<0>=b<4> b<1>=b<5> b<2>=b<6> b<3>=b<7>  cin=c4  s<0>=s1<0> s<1>=s1<1> s<2>=s1<2> s<3>=s1<3>  cout=c8  
+.subckt adder4bitCLA addr2 a<0>=a<8> a<1>=a<9> a<2>=a<10> a<3>=a<11>  b<0>=b<8> b<1>=b<9> b<2>=b<10> b<3>=b<11>  cin=c8  s<0>=s2<0> s<1>=s2<1> s<2>=s2<2> s<3>=s2<3>  cout=c12  
+.subckt adder4bitCLA addr3 a<0>=a<12> a<1>=a<13> a<2>=a<14> a<3>=a<15>  b<0>=b<12> b<1>=b<13> b<2>=b<14> b<3>=b<15>  cin=c12  s<0>=s3<0> s<1>=s3<1> s<2>=s3<2> s<3>=s3<3>  cout=cout  
+# assign s  = {s3 , s2 , s1 , s0 }
+.names s0<0> _n3<0>
+- =s0<0>
+.names s0<1> _n3<1>
+- =s0<1>
+.names s0<2> _n3<2>
+- =s0<2>
+.names s0<3> _n3<3>
+- =s0<3>
+.names s1<0> _n3<4>
+- =s1<0>
+.names s1<1> _n3<5>
+- =s1<1>
+.names s1<2> _n3<6>
+- =s1<2>
+.names s1<3> _n3<7>
+- =s1<3>
+.names s2<0> _n3<8>
+- =s2<0>
+.names s2<1> _n3<9>
+- =s2<1>
+.names s2<2> _n3<10>
+- =s2<2>
+.names s2<3> _n3<11>
+- =s2<3>
+.names s3<0> _n3<12>
+- =s3<0>
+.names s3<1> _n3<13>
+- =s3<1>
+.names s3<2> _n3<14>
+- =s3<2>
+.names s3<3> _n3<15>
+- =s3<3>
+.names _n3<0> s$raw_n2<0>
+- =_n3<0>
+.names _n3<1> s$raw_n2<1>
+- =_n3<1>
+.names _n3<2> s$raw_n2<2>
+- =_n3<2>
+.names _n3<3> s$raw_n2<3>
+- =_n3<3>
+.names _n3<4> s$raw_n2<4>
+- =_n3<4>
+.names _n3<5> s$raw_n2<5>
+- =_n3<5>
+.names _n3<6> s$raw_n2<6>
+- =_n3<6>
+.names _n3<7> s$raw_n2<7>
+- =_n3<7>
+.names _n3<8> s$raw_n2<8>
+- =_n3<8>
+.names _n3<9> s$raw_n2<9>
+- =_n3<9>
+.names _n3<10> s$raw_n2<10>
+- =_n3<10>
+.names _n3<11> s$raw_n2<11>
+- =_n3<11>
+.names _n3<12> s$raw_n2<12>
+- =_n3<12>
+.names _n3<13> s$raw_n2<13>
+- =_n3<13>
+.names _n3<14> s$raw_n2<14>
+- =_n3<14>
+.names _n3<15> s$raw_n2<15>
+- =_n3<15>
+# conflict arbitrators
+.names s$raw_n2<0>  s<0>
+- =s$raw_n2<0>
+.names s$raw_n2<1>  s<1>
+- =s$raw_n2<1>
+.names s$raw_n2<2>  s<2>
+- =s$raw_n2<2>
+.names s$raw_n2<3>  s<3>
+- =s$raw_n2<3>
+.names s$raw_n2<4>  s<4>
+- =s$raw_n2<4>
+.names s$raw_n2<5>  s<5>
+- =s$raw_n2<5>
+.names s$raw_n2<6>  s<6>
+- =s$raw_n2<6>
+.names s$raw_n2<7>  s<7>
+- =s$raw_n2<7>
+.names s$raw_n2<8>  s<8>
+- =s$raw_n2<8>
+.names s$raw_n2<9>  s<9>
+- =s$raw_n2<9>
+.names s$raw_n2<10>  s<10>
+- =s$raw_n2<10>
+.names s$raw_n2<11>  s<11>
+- =s$raw_n2<11>
+.names s$raw_n2<12>  s<12>
+- =s$raw_n2<12>
+.names s$raw_n2<13>  s<13>
+- =s$raw_n2<13>
+.names s$raw_n2<14>  s<14>
+- =s$raw_n2<14>
+.names s$raw_n2<15>  s<15>
+- =s$raw_n2<15>
+# non-blocking assignments 
+# latches
+# quasi-continuous assignment
+.end
+.model adder4bitCLA 
+# I/O ports
+.outputs s<0> s<1> s<2> s<3> 
+.inputs cin
+.inputs a<0> a<1> a<2> a<3> 
+.outputs cout
+.inputs b<0> b<1> b<2> b<3> 
+.subckt gen gen0 x=a<0>  y=b<0>  g=g0  
+.subckt gen gen1 x=a<1>  y=b<1>  g=g1  
+.subckt gen gen2 x=a<2>  y=b<2>  g=g2  
+.subckt gen gen3 x=a<3>  y=b<3>  g=g3  
+.subckt prop prop0 x=a<0>  y=b<0>  p=p0  
+.subckt prop prop1 x=a<1>  y=b<1>  p=p1  
+.subckt prop prop2 x=a<2>  y=b<2>  p=p2  
+.subckt prop prop3 x=a<3>  y=b<3>  p=p3  
+.subckt carry cr1 x=p0  y=cin  z=g0  c=c1  
+.subckt carry cr2 x=p1  y=c1  z=g1  c=c2  
+.subckt carry cr3 x=p2  y=c2  z=g2  c=c3  
+.subckt carry cr4 x=p3  y=c3  z=g3  c=cout  
+.subckt __sis_xor _n4 o=s<0> a=p0 b=cin 
+.subckt __sis_xor _n5 o=s<1> a=p1 b=c1 
+.subckt __sis_xor _n6 o=s<2> a=p2 b=c2 
+.subckt __sis_xor _n7 o=s<3> a=p3 b=c3 
+# conflict arbitrators
+# non-blocking assignments 
+# latches
+# quasi-continuous assignment
+.end
+.model gen 
+# I/O ports
+.inputs y
+.outputs g
+.inputs x
+.subckt __sis_and _n8 o=g a=x b=y 
+# conflict arbitrators
+# non-blocking assignments 
+# latches
+# quasi-continuous assignment
+.end
+.model prop 
+# I/O ports
+.inputs y
+.outputs p
+.inputs x
+.subckt __sis_xor _n9 o=p a=x b=y 
+# conflict arbitrators
+# non-blocking assignments 
+# latches
+# quasi-continuous assignment
+.end
+.model carry 
+# I/O ports
+.outputs c
+.inputs y
+.inputs z
+.inputs x
+.subckt __sis_and _na o=xy a=x b=y 
+.subckt __sis_or _nb o=c a=xy b=z 
+# conflict arbitrators
+# non-blocking assignments 
+# latches
+# quasi-continuous assignment
+.end
+.include sislib.mv

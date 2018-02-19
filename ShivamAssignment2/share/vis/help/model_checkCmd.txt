@@ -1,0 +1,324 @@
+
+  model_check - perform fair CTL model checking on a flattened network
+     _________________________________________________________________
+
+   model_check [-b] [-c] [-d <dbg_level>] [-f <dbg_file>] [-g <hints_file>]
+   [-h]  [-i]  [-m] [-r] [-t <time_out_period>][-v <verbosity_level>] [-D
+   <dc_level>] [-F] [-S <schedule>] [-V] [-B] [-I] [-C] [-w <node_file>] [-W]
+   [-G] <ctl_file>
+
+   Performs fair CTL model checking on a flattened network. Before calling this
+   command, the user should have initialized the design by calling the command
+   [1]init_verify. Regardless of the options, no 'false positives' or 'false
+   negatives' will occur: the result is correct for the given circuit.
+
+   Properties to be verified should be provided as CTL formulas in the file
+   ctl_file. Note that the support of any wire referred to in a formula should
+   consist only of latches. For the precise syntax of CTL formulas, see the
+   [2]VIS CTL and LTL syntax manual.
+
+   Properties  of  the form AG f, where f is a formula not involving path
+   quantifiers are referred to as invariants; for such properties it may be
+   substantially faster to use the [3]check_invariant command.
+
+   A fairness constraint can be specified by invoking the [4]read_fairness
+   command; if none is specified, all paths are taken to be fair. If some
+   initial states do not lie on a fair path, the model checker prints a message
+   to this effect.
+
+   A  formula passes iff it is true for all initial states of the system.
+   Therefore, in the presence of multiple initial states, if a formula fails,
+   the negation of the formula may also fail.
+
+   If  a  formula does not pass, a (potentially partial) proof of failure
+   (referred to as a debug trace) is demonstrated. Fair paths are represented
+   by a finite sequence of states (the stem) leading to a fair cycle, i.e. a
+   cycle on which there is a state from each fairness condition. The level of
+   detail of the proof can be specified (see option -d).
+
+   Both  backward (future tense CTL formulas) and forward (past tense CTL
+   formulas) model checking can be performed. Forward model checking is based
+   on Iwashita's ICCAD96 paper. Future tense CTL formulas are automatically
+   converted to past tense ones as much as possible in forward model checking.
+
+   Command options:
+
+   -b
+          Use backward analysis when performing debugging; the default is to
+          use forward analysis. This should be tried when the debugger spends a
+          large amount of time when creating a path to a fair cycle. This
+          option is not compatible with forward model checking option (-F).
+
+   -c
+          Use the formula tree so that there is no sharing of sub-formulae
+          among the formulae in the input file. This option is useful in the
+          following scenario - formulae A, B and C are being checked in order
+          and  there  is sub-formula sharing between A and C. If the BDDs
+          corresponding to the shared sub-formula is huge then computation for
+          B might not be able to finish without using this option.
+
+   -d <dbg_level>
+          Specify the amount of debugging performed when the system fails a
+          formula being checked. Note that it may not always be possible to
+          give a simple counter-example to show that a formula is false, since
+          this may require enumerating all paths from a state. In such a case
+          the model checker will print a message to this effect. This option is
+          incompatible with -F.
+
+          dbg_level must be one of the following:
+
+          0: No debugging performed. dbg_level=0 is the default.
+
+          1: Debugging with minimal output: generate counter-examples for
+          universal formulas (formulas of the form AX|AF|AU|AG) and witnesses
+          for existential formulas (formulas of the form EX|EF|EU|EG). States
+          on a path are not further analyzed.
+
+          2:  Same as dbg_level=1, but more verbose. (The subformulas are
+          printed, too.)
+
+          3: Maximal automatic debugging: as for level 1, except that states
+          occurring on paths will be recursively analyzed.
+
+          4: Manual debugging: at each state, the user is queried if more
+          feedback is desired.
+
+   -f <dbg_file>
+          Write the debugger output to dbg_file. This option is incompatible
+          with  -F. Notes: when you use -d4 (interactive mode), -f is not
+          recommended, since you can't see the output of vis on stdout.
+
+   -g <hints_file>
+          Use guided search. The file hints_file contains a series of hints. A
+          hint is a formula that does not contain any temporal operators, so
+          hints_file has the same syntax as a file of invariants used for
+          check_invariant. The hints are used in the order given to change the
+          transition relation. In the case of least fixpoints (EF, EU), the
+          transition relation is conjoined with the hint, whereas for greatest
+          fixpoints the transition relation is disjoined with the negation of
+          the hint. If the hints are cleverly chosen, this may speed up the
+          computation  considerably,  because  a  search with the changed
+          transition relation may be much simpler than one with the original
+          transition relation, and results obtained can be reused, so that we
+          may never have to do a complicated search with the original relation.
+          Note: hints in terms of primary inputs are not useful for greatest
+          fixpoints. See also: Ravi and Somenzi, Hints to accelerate symbolic
+          traversal. CHARME'99; Bloem, Ravi, and Somenzi, Efficient Decision
+          Procedures  for Model Checking of Linear Time Logic Properties,
+          CAV'99; Bloem, Ravi, and Somenzi, Symbolic Guided Search for CTL
+          Model Checking, DAC'00.
+
+          For formulae that contain both least and greatest fixpoints, the
+          behavior depends on the flag guided_search_hint_type. If it is set to
+          local (default) then every subformula is evaluated to completion,
+          using all hints in order, before the next subformula is started. For
+          pure   ACTL   or   pure   ECTL   formulae,   we  can  also  set
+          guided_search_hint_type to global, in which case the entire formula
+          is evaluated for one hint before moving on to the next hint, using
+          underapproximations. The description of the options for guided search
+          can be found in the help page for print_guided_search_options.
+
+          model_check will call reachability without any guided search, even if
+          -g is used. If you want to perform reachability with guided search,
+          call rch directly.
+
+          Incompatible with -F.
+
+   -h
+          Print the command usage.
+
+   -i
+          Print  input  values  causing transitions between states during
+          debugging. Both primary and pseudo inputs are printed. This option is
+          incompatible with -F.
+
+   -m
+          Pipe debugger output through the UNIX utility more. This option is
+          incompatible with -F.
+
+   -o <property_index>
+          Model check only the property with the given index. Indices start
+          from 0. An index of -1 means all properties (default). An out of
+          range index means that no property is checked.
+
+   -r
+          Reduce the FSM derived from the flattened network with respect to
+          each formula being checked. By default, the FSM is reduced with
+          respect to the conjunction of the formulae in the input file. If this
+          option is used and don't cares are being used for simplification,
+          then  subformula sharing is disabled (result might be incorrect
+          otherwise).
+
+          The truth of a formula may be independent of parts of the network
+          (such as when wires have been abstracted; see [5]flatten_hierarchy).
+          These parts are effectively removed when this option is invoked; this
+          may result in more efficient model checking.
+
+   -t <timeOutPeriod>
+          Specify the time out period (in seconds) after which the command
+          aborts. By default this option is set to infinity.
+
+   -v <verbosity_level>
+          Specify verbosity level. This sets the amount of feedback on CPU
+          usage and code status.
+          verbosity_level must be one of the following:
+
+          0: No feedback provided. This is the default.
+
+          1: Feedback on code location.
+
+          2: Feedback on code location and CPU usage.
+
+   -B
+          Check for vacuously passing formulae using the algorithm of Beer et
+          al. (CAV97). The algorithm applies to a subset of ACTL (w-ACTL) and
+          replaces the smallest important subformula of a passing property with
+          either  FALSE or TRUE depending on its negation parity. It then
+          applies model checking to the resulting witness formula. If the
+          witness formula also passes, then the original formula is deemed to
+          pass vacuously. If the witness formula fails, a counterexample to it
+          provides an interesting witness to the original passing formula. See
+          the CAV97 paper for the definitions of w-ACTL, important subformula,
+          and interesting witness. In short, one of the operands of a binary
+          operator in a w-ACTL formula must be a propositional formula. See
+          also the -V option.
+
+   -C
+          Compute coverage of all observable signals in a set of CTL formulae
+          using  the algorithm of Hoskote, Kam, Ho, Zhao (DAC'99). If the
+          verbosity level (-v option) is equal to 0, only the coverage stats
+          are printed. If verbosity level is greater than zero, then detailed
+          information of the computation at each step of the algorithm is also
+          provided. Debug information is provided in the form of states not
+          covered for each observable signal if the dbg_level (-d option) is
+          greater  than 0. The number of states printed is set by the vis
+          environment variable 'nr_uncoveredstates'. By default the number of
+          states printed is 1. The value of nr_uncoveredstates can be set using
+          the set command. See also the -I option.
+
+   -D <dc_level>
+          Specify extent to which don't cares are used to simplify MDDs in
+          model checking. Don't cares are minterms on which the values taken by
+          functions do not affect the computation; potentially, these minterms
+          can be used to simplify MDDs and reduce the time taken to perform
+          model checking. The -g flag for guided search does not affect the way
+          in which the don't-care conditions are computed.
+          dc_level must be one of the following:
+
+          0 : No don't cares are used.
+
+          1 : Use unreachable states as don't cares. This is the default.
+
+          2 : Use unreachable states as don't cares and in the EU computation,
+          use 'frontiers' for image computation.
+
+          3  : First compute an overapproximation of the reachable states
+          (ARDC), and use that as the cares set. Use `frontiers' for image
+          computation. For help on controlling options for ARDC, look up help
+          on the command: [6]print_ardc_options. Refer to Moon, Jang, Somenzi,
+          Pixley, Yuan, "Approximate Reachability Don't Cares for {CTL} Model
+          Checking",  ICCAD98,  and to two papers by Cho et al, IEEE TCAD
+          December 1996: one is for State Space Decomposition and the other is
+          for Approximate FSM Traversal.
+
+   -F
+          Use forward model checking based on Iwashita's method in ICCAD96.
+          Future tense CTL formulas are automatically converted to past tense
+          ones as much as possible. Converted forward formulas are printed when
+          verbosity is greater than 0. Debug options (-b, -d, -f, -i, and -m)
+          are  ignored  with this option. We have seen that forward model
+          checking was much faster than backward in many cases, also forward
+          was much slower than backward in many cases.
+
+   -I
+          Compute coverage of all observable signals in a set of CTL formulae
+          using  an  improved  algorithm of Jayakumar, Purandare, Somenzi
+          (DAC'03). If the verbosity level (-v option) is equal to 0, only the
+          coverage stats are printed. If verbosity level is greater than zero,
+          then detailed information of the computation at each step of the
+          algorithm is also provided. Debug information is provided in the form
+          of states not covered for each observable signal if the dbg_level (-d
+          option) is greater than 0. The number of states printed is set by the
+          vis environment variable 'nr_uncoveredstates'. By default the number
+          of states printed is 1. The value of nr_uncoveredstates can be set
+          using the set command. Compared to the -C option, this one produces
+          more accurate results and deals with a larger subset of CTL.
+
+   -S <schedule>
+          Specify schedule for GSH algorithm, which generalizes the Emerson-Lei
+          algorithm and is used to compute greatest fixpoints. The choice of
+          schedule  affects the sequence in which EX and EU operators are
+          applied. It makes a difference only when fairness constraints are
+          specified.
+          <schedule> must be one of the following:
+
+          EL : EU and EX operators strictly alternate. This is the default.
+
+          EL1 : EX is applied once for every application of all EUs.
+
+          EL2 : EX is applied repeatedly after each application of all EUs.
+
+          budget : a hybrid of EL and EL2.
+
+          random : enabled operators are applied in (pseudo-)random order.
+
+          off : GSH is disabled, and the old algorithm is used instead. The old
+          algorithm uses the EL schedule, but the termination checks are less
+          sophisticated than in GSH.
+
+   -V
+          Check for vacuously passing formulae with the algorithm of Purandare
+          and Somenzi (CAV2002). The algorithm applies to all of CTL, and to
+          both  passing and failing properties. It says whether a passing
+          formula may be strengthened and still pass, and whether a failing
+          formula may be weakened and still fail. It considers all leaves of a
+          formula that are under one negation parity (e.g., not descendants of
+          a XOR or EQ node) for replacement by either TRUE or FALSE. See also
+          the -B option.
+
+   -w <node_file> This option invoked the algorithm to generate an error trace
+          divided into fated and free segements. Fate represents the
+          inevitability and free is asserted when there is no inevitability.
+          This can be formulated as a two-player concurrent reachability game.
+          The two players are the environment and the system. The node_file is
+          given to specify the variables the are controlled by the system.
+
+   -W
+   This option represents the case that all input variables are controlled by
+          system.
+
+   -G
+   We proposed two algorithm to generate segemented counter example. They are
+          general and restrcited algorithm. Bu default we use restricted
+          algorithm. We can invoke general algorithm with -G option. For more
+          information, please check the STTT'04 paper of Jin et al., "Fate and
+          Free Will in Error Traces"
+
+   <ctl_file>
+          File containing CTL formulas to be model checked.
+
+   Related "set" options:
+
+   ctl_change_bracket <yes/no>
+          Vl2mv automatically converts "[]" to "<>" in node names, therefore
+          CTL parser does the same thing. However, in some cases a user does
+          not want to change node names in CTL parsing. Then, use this set
+          option by giving "no". Default is "yes".
+
+   guided_search_hint_type
+          Switches between local and global hints (see the -g option, or the
+          help page for set).
+
+   See also commands : approximate_model_check, incremental_ctl_verification
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
+
+References
+
+   1. file://localhost/projects/development/hsv/vis/common/doc/html/init_verifyCmd.html
+   2. file://localhost/projects/development/hsv/vis/common/doc/ctl/ctl/ctl.html
+   3. file://localhost/projects/development/hsv/vis/common/doc/html/check_invariantCmd.html
+   4. file://localhost/projects/development/hsv/vis/common/doc/html/read_fairnessCmd.html
+   5. file://localhost/projects/development/hsv/vis/common/doc/html/flatten_hierarchyCmd.html
+   6. file://localhost/projects/development/hsv/vis/common/doc/html/print_ardc_optionsCmd.html

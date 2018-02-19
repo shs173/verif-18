@@ -1,0 +1,50 @@
+set open_path .:
+
+alias acyc test_network_acyclic
+alias aig  build_partition_maigs
+alias amc  approximate_model_check
+alias bmc  bounded_model_check
+alias ci   check_invariant
+alias dvo  dynamic_var_ordering
+alias flt  flatten_hierarchy
+alias icv  incremental_ctl_verification
+alias init init_verify
+alias le   lang_empty
+alias ltl  ltl_model_check
+alias mc   model_check
+alias imc  iterative_model_check
+alias part build_partition_mdds
+alias pf   print_fairness
+alias pbs  print_bdd_stats
+alias phs  print_hierarchy_stats
+alias pii  print_img_info
+alias pio  print_io
+alias pl   print_latches
+alias pm   print_models
+alias pn   print_network
+alias pns  print_network_stats
+alias pp   print_partition
+alias pps  print_partition_stats
+alias q    quit
+alias rch  compute_reach -v 1
+alias resv res_verify
+alias rf   read_fairness
+alias rl   read_blif
+alias rlmv read_blif_mv
+alias ro   so -s input_and_latch
+alias rsf  reset_fairness
+alias sift dvo -f sift
+alias sim  simulate
+alias so   static_order
+alias synth synthesize_network
+alias window dvo -f window
+alias wl   write_blif
+alias wlmv write_blif_mv
+alias wo   write_order
+
+#image method iwls95 related settings
+set image_W1 6
+set image_W2 1
+set image_W3 1
+set image_W4 2
+set partition_threshold 5000

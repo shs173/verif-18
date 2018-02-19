@@ -1,0 +1,132 @@
+
+  simulate - simulate the flattened network
+     _________________________________________________________________
+
+   simulate [ -I <0/1> ] [ -O <0/1> ] [ -P <0/1> ] [ -S <0/1> ] [ -h ] [ -i
+   <vectors_file> ] [ -n <vectors_number> ] [ -o <output_file> ] [ -p <0|1> ] [
+   -v ]
+
+   Simulates  a  network with a set of input vectors. Before calling this
+   command,  the  user  should  create  a  partition  (using  the command
+   build_partition_mdds). The simulation vectors can be provided by the user
+   (using -i vectors_file), or generated randomly.
+
+   Command options:
+
+   -I <0/1>
+          This option controls the printing the primary input variables. 0
+          implies printing is disabled, enabled otherwise. The default value is
+          1. The output file generated with this flag set to 0 may not be used
+          as input file for simulation (if there are some primary inputs to the
+          system).
+
+   -O <0/1>
+          This option controls the printing the primary output variables. 0
+          implies printing is disabled, enabled otherwise. The default value is
+          1.
+
+   -P <0/1>
+          This option controls the printing the pseudo input variables. 0
+          implies printing is disabled, enabled otherwise. The default value is
+          1. The output file generated with this flag set to 0 may not be used
+          as input file for simulation (if there are some pseudo-inputs to the
+          system).
+
+   -S <0/1>
+          This option controls the printing the state variables. 0 implies
+          printing is disabled, enabled otherwise. The default value is 1.
+
+   -h
+          Print a help message that details all options.
+
+   -i <vectors_file>
+          Give the simulation vector file name. If this option is not used,
+          vectors are generated randomly.
+
+   -n <N>
+          Simulate N vectors. This option should be used if vectors_file is not
+          specified. If a vectors_file is given, and if there are more than N
+          vectors in the file, only the first N vectors are simulated.
+
+   -o <output_file>
+          Give  the  name of a file where the simulation result should be
+          written.  If  this option is not used, the simulation result is
+          directed to standard output.
+
+   -p <0|1|2>
+          This option is available only with random vector generation mode, and
+          affects how values for pseudo-inputs (non-deterministic constants)
+          are generated. 0: pseudo-inputs are treated by user. 1: pseudo-inputs
+          are treated randomly. 2: pseudo-inputs are treated by choosing the
+          first possibility.
+
+   -v
+          Enable verbose mode. Prints CPU time usage.
+
+   The vectors_file has two main parts:
+
+   Declarations:
+
+        Inputs list:
+                Gives an ordering of the primary and pseudo inputs. Every input
+                must be reported in this field.
+
+        Latches list:
+                Gives an ordering of the latches. Every latch must be reported
+                in this field.
+
+        Outputs list:
+                Gives an ordering of the outputs. This list may be incomplete.
+                Simulation is performed only on outputs present in this list.
+
+        Initial state:
+                Value of an initial state. This value is given with respect to
+                the latch ordering.
+
+   Simulation Vectors:
+          One vector per line according to the given order of inputs.
+
+   Final State:
+          Prints the value of state variables after the last simulation vector
+          is applied.
+
+   An example of a simulation vectors file is:
+   # ----> Declarations
+       .inputs X1 X2
+       .latches L1 L2
+       .outputs O
+       .initial green 0
+       .start_vectors
+       # ----> Vectors
+       0 1
+       1 0
+       1 1
+
+   Note the keywords: .inputs, .latches, .outputs, .initial, .start_vectors. A
+   line started by a '#' is a comment line.
+
+   The simulation result is printed either in a file (using -o output_file) or
+   to standard output. It has the same format as vectors_file with additional
+   fields for latches and outputs. Here is the result of simulation on last
+   vectors_file example:
+   .inputs X1 X2
+       .latches L1 L2
+       .outputs O
+       .initial green 0
+       .start_vectors
+       #input; current_state; output
+       0 1 ; green 0 ; 0
+       1 0 ; blue 0 ; 1
+       1 1 ; red 1 ; 1
+       #Final State : green 1
+
+   Note that each input line has been extended by its simulation result with
+   current states and outputs listed in order. The output_file can be read by
+   simulate as vectors_file (latches and outputs values are ignored). When
+   starting simulation a good trick is to run simulate with random vectors
+   generation  mode;  the  resulting can be used as a template to write a
+   vectors_file. For example, executing "simulate -n 1 -o foo.output" will
+   generate a representative file.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

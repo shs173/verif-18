@@ -1,0 +1,233 @@
+
+  print_ardc_options - print information about the ARDC options currently in
+  use
+     _________________________________________________________________
+
+   print_ardc_options [-h] [-H]
+
+   Prints information about the current ARDC options.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -H
+          Print the ARDC set command usage.
+
+   Set parameters: The ARDC options are specified with the set command.
+
+   ardc_traversal_method <method>
+          Specify a method for approximate FSM traversal.
+
+          method must be one of the following:
+
+          0 : MBM (machine by machine).
+
+          1 : RFBF(reached frame by frame).
+
+          2 : TFBF(to frame by frame).
+
+          3 : TMBM(combination of MBM and TFBF).
+
+          4 : LMBM(least fixpoint MBM, default).
+
+          5 : TLMBM(combination of LMBM and TFBF).
+
+   ardc_group_size <size>
+          Specify the number of latches per group for ARDCS.
+
+          size must be a positive integer (default = 8).
+
+   ardc_affinity_factor <affinity>
+          Specify affinity factor to make a group for ARDCs. The available
+          factor is from 0.0(use only correlation) to 1.0(use only dependency).
+
+          affinity must be a positive real (default = 0.5).
+
+   ardc_max_iteration <iteration>
+          Specify the maximum iteration count during approximate FSM traversal.
+          Default is 0 which means infinite.
+
+          iteration must be a positive integer or zero.
+
+   ardc_constrain_target <target>
+          Specify where image constraining will be applied to.
+
+          target must be one of the following:
+
+          0 : constrain transition relation (default).
+
+          1 : constrain initial states.
+
+          2 : constrain both.
+
+   ardc_constrain_method <method>
+          Specify an image constraining method to compute ARDCs.
+
+          method must be one of the following:
+
+          0 : restrict (default).
+
+          1 : constrain
+
+          2 : compact (currently supported by only CUDD)
+
+          3 : squeeze (currently supported by only CUDD)
+
+   ardc_constrain_reorder <method>
+          Specify whether to enable variable reorderings during consecutive
+          image constraining operations.
+
+          method must be one of the following:
+
+          yes  :  allow  variable  reorderings  during  consecutive image
+          constraining operations (default)
+
+          no  : don't allow variable reorderings during consecutive image
+          constraining operations
+
+   ardc_abstract_pseudo_input <method>
+          Specify when to abstract pseudo primary input variables out from
+          transition relation.
+
+          method must be one of the following:
+
+          0 : do not abstract pseudo input variables
+
+          1 : abstract pseudo inputs before image computation (default)
+
+          2 : abstract pseudo inputs at every end of image computation
+
+          3 : abstract pseudo inputs at the end of approximate traversal
+
+   ardc_decompose_flag <method>
+          Specify whether to use decomposed approximate reachable states or
+          single conjuncted reachable states.
+
+          method must be one of the following:
+
+          yes : keep decomposed reachable stateses (default)
+
+          no : make a conjunction of reachable states of all submachines
+
+   ardc_projected_initial_flag <method>
+          Specify which initial states is going to be used.
+
+          method must be one of the following:
+
+          yes : use projected initial states for submachine (default)
+
+          no : use original initial states for submachine
+
+   ardc_image_method <method>
+          Specify  image_mathod  during  computing  reachable  states  of
+          submachines.
+
+          method must be one of the following:
+
+          monolithic : use monolithic image computation
+
+          iwls95 : use iwls95 image computation (default)
+
+          mlp : use mlp image computation
+
+          tfm : use tfm image computation
+
+          hybrid : use hybrid image computation
+
+   ardc_use_high_density <method>
+          Specify whether to use high density in computing reachable states of
+          submachines.
+
+          method must be one of the following:
+
+          yes : use High Density for reachable states of submachines
+
+          no : use BFS for reachable states of submachines (default)
+
+   ardc_reorder_ptr <method>
+          Specify whether to reorder partitioned transition relation after
+          constraining fanin submachines.
+
+          method must be one of the following:
+
+          yes : whenever partitioned transition relation changes, reorders
+          partitioned transition relation
+
+          no : no reordering of partitioned transition relation (default)
+
+   ardc_fanin_constrain_mode <method>
+          Specify which method will be used in constraining fanin submachines.
+
+          method must be one of the following:
+
+          0  : constrain w.r.t. the reachable states of fanin submachines
+          (default)
+
+          1 : constrain w.r.t. the reachable states of both fanin submachines
+          and itself
+
+   ardc_create_pseudo_var_mode <method>
+          Specify which method will be used to create pseudo input variables of
+          submachines.
+
+          method must be one of the following:
+
+          0 : makes pseudo input variables with exact support (default)
+
+          1 : makes pseudo input variables from all state variables of the
+          other submachines
+
+          2 : makes pseudo input variables from all state variables of fanin
+          submachines
+
+   ardc_lmbm_initial_mode <method>
+          Specify  which  method  will  be used as initial states in LMBM
+          computation.
+
+          method must be one of the following:
+
+          0 : use given initial states all the time
+
+          1 : use current reached states as initial states (default)
+
+          2 : use current frontier as initial states
+
+   set ardc_mbm_reuse_tr <method>
+          Specify whether to reuse already constrained transition relation for
+          next iteratrion in MBM.
+
+          method must be one of the following:
+
+          yes : use constrained transition relation for next iteration
+
+          no : use original transition relation for next iteration (default)
+
+   ardc_read_group <filename>
+          Specify a filename containing grouping information
+
+          filename containing grouping information
+
+   ardc_write_group <filename>
+          Specify a filename to write grouping information
+
+          filename to write grouping information
+
+   ardc_verbosity <verbosity>
+          Specify the level of printing information during computing ARDCs.
+
+          verbosity must be 0 - 3 (default = 0).
+
+   The default settings correspond to the fast variants of LMBM and MBM. MBM
+   never  produces  a  more accurate approximation than LMBM for the same
+   state-space decomposition. However, the corresponding statement does not
+   hold for the fast versions. (That is, FastMBM will occasionally outperform
+   FastLMBM.) To get the slower, but more accurate versions of LMBM and MBM use
+   the following settings:
+     * set ardc_constrain_method 1
+     * set ardc_constrain_reorder no
+     * set ardc_abstract_pseudo_input 0
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,98 @@
+#!/usr/local/bin/perl
+#
+# Script to process the output of purify in terms of memory use.
+#
+# Abelardo Pardo <abel@vlsi.colorado.edu>
+#
+# Revision [$Id: createfunctionmap,v 1.4 1996/12/18 23:43:46 hsv Exp $]
+
+require 5.001;
+use Getopt::Long;
+
+# Define default variables
+#
+$version = 1.3;
+
+# Initialize the different options 
+#
+$opt_h = 0;
+$opt_v = 0;
+
+# Read the options
+# 
+$optionResult = GetOptions("h","v");
+
+# Print the version if required
+#
+if ($opt_v) {
+    print <<ENDOFMESSAGE;
+$0 -- Version: $version -- by Abelardo Pardo <abel\@vlsi.colorado.edu>
+ENDOFMESSAGE
+    exit;
+}
+
+# Print the help message if required
+#
+if ($opt_h || !$optionResult) {
+    print <<ENDOFMESSAGE;
+
+$0 - Program to extract the function declarations from C source code files and 
+     create a map of functions to files. The files must contain the declaration
+     of the functions encapsulated between the keywords "AutomaticStart" and
+     "AutomaticEnd". The tool "extproto" provides an automatic way to create
+     this encapsulations in any *.[ch] file. The file must also contain a
+     "FileName" and a "PackageName" field on its header in order for the map to
+     be extracted correctly.
+
+Usage:
+  $0 [-h] [-v] <files>
+
+Options:
+  -h                Print this message
+  -v                Print the version
+
+Author: Abelardo Pardo <abel\@vlsi.colorado.edu>
+
+ENDOFMESSAGE
+    exit;
+}
+
+# Open the input files
+#
+foreach $filename (@ARGV) {
+
+    if (open(INPUT, $filename)) {
+
+	$indefinition = 0;
+	while(<INPUT>) {
+	    chop;
+	    
+	    if (/FileName\s+\[\s*(.+)\s*\]/) {
+		$cfilename = $1;
+	    }
+	    if (/PackageName\s+\[\s*(.+)\s*\]/) {
+		$pkgname = $1;
+	    }
+	    if (/^\/\*\*AutomaticStart\*+\/$/) {
+		$indefinition = 1;
+	    }
+	    if (/^\/\*\*AutomaticEnd\*+\/$/) {
+		$indefinition = 0;
+	    }
+	    
+	    if ($indefinition == 1) {
+		if (/static\s*.*\s+([a-zA-Z0-9_]+\(.*\))/) {
+		    $function = $1;
+		    $function =~ /([a-zA-Z0-9_]+)\(.*\)/;
+		    print "$pkgname $cfilename $1\n";
+		}
+	    }
+	}
+	close(INPUT);
+    }
+    else {
+	print "Unable to open $filename. Ignoring it.\n";
+    }
+} 
+
+exit;

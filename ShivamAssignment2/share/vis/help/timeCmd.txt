@@ -1,0 +1,23 @@
+
+  time - provide a simple elapsed time value
+     _________________________________________________________________
+
+   time [-h][-u]
+
+   Prints the processor time used since the last time command, and the total
+   processor time used since VIS was started.
+
+   By default, the time reported is the CPU time spent executing instructions
+   of the calling process and the time this process waited for children that
+   terminated.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -u
+          Exclude child process time.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,18 @@
+
+  _tbl_test - test the functionality of the tbl package.
+     _________________________________________________________________
+
+   _tbl_test [-h] [-v]
+
+   Tests the functionality of the tbl package.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -v
+          Verbose mode.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

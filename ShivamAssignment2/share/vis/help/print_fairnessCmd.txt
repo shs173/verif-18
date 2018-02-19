@@ -1,0 +1,17 @@
+
+  print_fairness - print the fairness constraint of the flattened network
+     _________________________________________________________________
+
+   print_fairness [-h]
+
+   Print the fairness constraint (i.e the set of Buchi conditions) associated
+   with the FSM of the flattened network. By default, the flattened network has
+   the single constraint TRUE, indicating that all paths are fair.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

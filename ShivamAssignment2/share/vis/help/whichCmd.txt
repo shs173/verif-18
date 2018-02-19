@@ -1,0 +1,21 @@
+
+  which - look for a file called name
+     _________________________________________________________________
+
+   which [-h] <file_name>
+
+   Looks  for  a  file in a set of directories which includes the current
+   directory as well as those in the VIS path. If it finds it, it reports the
+   path. The path is specified through the "set open_path" command in the
+   .visrc.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   <file_name>
+          File to be searched
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

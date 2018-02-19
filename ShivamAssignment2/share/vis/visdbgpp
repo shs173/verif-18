@@ -1,0 +1,66 @@
+#! /usr/bin/perl
+#
+# Postprocess debug file from vis
+#   Combine bus signals
+#
+# Author: Toshi Isogai
+#
+# $Id: visdbgpp,v 1.1 2001/03/14 20:10:04 hsv Exp $
+
+%sigval = ();
+
+while (<>) {
+  if (m{^([\w\.]+(<\*\d+\*>)?)<\d+>}) {	# a (possibly partial) state
+    # get lines on the same bus
+    $sig = $1;
+    $val = $sigval{$sig};
+    # Quote the signal name when using it as pattern because it may
+    # contain the metacharacter '*'.
+    while (m{^\Q$sig\E<(\d+)>:(\d)}) {
+      $val = ($val & ~(1<<$1)) | ($2 << $1); # replace value on bit
+      $_ = <ARGV>;
+    }
+    printf "$sig:0x%X\n", $val;
+    $sigval{$sig} = $val;
+    redo;
+
+  } elsif (m{<}) {		# a CTL formula
+      # combine (xyz<a+1:a> * xyz<a-1>) into xyz<a+1:a-1>
+      while (m{\(([\w\.]+(<\*\d+\*>)?)<(\d+)(:(\d+))?>=(0x)?([\da-fA-F]+)
+	       \s\*\s
+	       \1<(\d+)>=(\d)\)}xg) {
+	$str = $&;		# entire matched string
+	$sig = $1;		# signal name
+	$msb = $3;		# most significant bit index
+	$lsb = $5;		# optional least significant bit index
+	$val = hex ($7);	# value of left-hand side
+	$newlsb = $8;		# index being added to the vector
+	$bit = $9;		# value of the new bit
+
+	if ($lsb eq '') {
+	  # new start
+	  $lsb = $msb;
+	}
+
+	if ($lsb == $newlsb+1 || $msb == $newlsb-1) {
+	  $val = sprintf("%X",($val << 1) + $bit);
+
+	  s{\Q$str\E}{$sig<$msb:$newlsb>=0x$val};
+
+	} else {
+	  # warning
+	  print (STDERR "Warning: Non concecutive bits at $.. ");
+ 	  if ($msb == $lsb) {
+	    print (STDERR "Bit $msb next to Bit $newlsb\n");
+	  } else {
+	    print (STDERR "MSB $msb LSB $lsb next to Bit $newlsb\n");
+	  }
+	}
+
+      }
+
+  }
+  print;
+  last if eof();
+
+}

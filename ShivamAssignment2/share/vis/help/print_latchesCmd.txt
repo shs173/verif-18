@@ -1,0 +1,15 @@
+
+  print_latches - print the names of latches in the current node
+     _________________________________________________________________
+
+   print_latches [-h]
+
+   Prints the names of latches in the current node.
+
+   Command options:
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

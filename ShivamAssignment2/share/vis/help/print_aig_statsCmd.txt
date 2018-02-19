@@ -1,0 +1,26 @@
+
+  print_aig_stats - print statistics about the AND/INVERTER graph.
+     _________________________________________________________________
+
+   print_aig_stats [-h] [-n]
+
+   Print the following statistics about the AND/INVERTER graph:
+
+     Maximum number of nodes: the maximum number of nodes in the AND/ INVERTER
+          graph.
+
+     Current number of nodes: the number of nodes in the AND/INVERTER graph
+          that are used.
+
+   Note that build_partition_maigs must be called before this command.
+
+   Command options:
+
+   -n
+          Print the name of the nodes.
+
+   -h
+          Print the command usage.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

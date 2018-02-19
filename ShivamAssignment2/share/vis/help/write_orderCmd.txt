@@ -1,0 +1,61 @@
+
+  write_order - write the current order of the MDD variables of the flattened
+  network
+     _________________________________________________________________
+
+   write_order [-h] [-o <type>] [<file>]
+
+   Write the current order of the MDD variables of the flattened network. If no
+   file name is specified, the output is written to stdout. A sample output is
+   shown here.
+  # name                 type            mddId vals levs
+  system.choosing0      primary-input       31    2 (61)
+  system.p0.pc          latch               32   11 (62, 63, 64, 65)
+  
+
+   The first column gives the full hierarchical path name of the node, starting
+   from the current hierarchical node. The second column gives the type of the
+   node in the flattened network (see the command print_network). The third
+   column gives the MDD id of the node; this can be thought of as just another
+   name for the node. The fourth column gives the number of values that the
+   multi-valued variable at the output of the node can assume. The last column
+   gives the levels of the BDD variables that encode the multi-valued variable
+   (0 is the topmost level of the BDD).
+
+   The bits of a multi-valued variable need not appear consecutively (due to
+   dynamic variable ordering). Each node appears at most once in the output
+   file. The nodes in the file appear in ascending order of the lowest level
+   bit in the encoding of the node's multi-valued variable (e.g. a node with
+   levels (12, 73) will appear before a node with levels (17, 21, 25)).
+
+   To specify a variable ordering for static_order, a convenient tactic is to
+   write out the current ordering, edit the file to rearrange the ordering (or
+   comment out some nodes, using "#"), and then read the file back in using
+   static_order. Note that everything after the first column is ignored when
+   the file is read in.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -o <type>
+          Specify  the network nodes to write out. Type can be one of the
+          following:
+
+          all: Write out all the nodes of the network. This option is allowed
+          only if all variables have been ordered.
+
+          input_and_latch: (default) Write out the primary inputs, pseudo
+          inputs, latches, and next state variables.
+
+          next_state_node: Write out the next state variables (node type is
+          "shadow"). This file can be modified and read back in using the
+          static_order -s next_state_node command.
+
+   <file>
+          File to which to write the ordering. By default, the ordering is
+          written to stdout.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

@@ -1,0 +1,135 @@
+
+  restruct_fsm - Restructre the STG of a finite state machine to reduce power
+  dissipation.
+     _________________________________________________________________
+
+   restruct_fsm [-D <fileHead>] [-d <divMethod>] [-E] [-F <factMethod>] [-f
+   <probFile>] [-h] [-N] [-o <orderFile>] [-p <string>] [-s <restrMethod>] [-t
+   <seconds>] [-v]
+
+   This command implements an STG restructuring algorithm that exploits the
+   existence  of  equivalent  states  to  decrease power dissipation, not
+   necessarily  by  collapsing the equivalence states, but by redirecting
+   transitions in the state transition graph (STG). This algorithm is based on
+   monolithic transition relation. The complexity of the algorithm in general
+   increases with an increase in the size of the STG. The number of states and
+   edges  in the STG are exponential in the number of state variables and
+   primary inputs. The memory utilization is not necessarily exponential due to
+   symbolic  representation of the STG. For more details see, "A Symbolic
+   Algorithm for Low-Power Sequential Synthesis", ISLPED 97. This command works
+   only if VIS is compiled with CUDD package. The algorithm can handle circuits
+   described in both BLIF and BLIF-MV format. However, multi-valued variables
+   are  not  supported.  Also,  the  final  synthesized  circuit (network
+   implementation of the restructured STG) is available only in BLIF format.
+   The sequential circuit should have a single initial state. A network should
+   have been created for the circuit and its primary inputs and state variables
+   assigned BDD ids prior to the invocation of this command. A network can be
+   created by the command flatten_hierarchy and command static_order assigns
+   BDD ids to the input and state variables. The command proceeds by creating
+   BDDs for the outputs and next state functions. An FSM data structure is then
+   created on which subsequent operations are performed. After the STG is
+   restructured a new circuit is synthesized by symbolic factorization based on
+   Zero-Suppressed Decision Diagrams (ZDDs). The final synthesized circuit is a
+   file in BLIF format with ".ml.blif" as the extension.
+
+   The typical command flow in vis is the following:
+   vis> read_blif foo.blif
+   vis> flatten_hierarchy
+   vis> static_order
+   vis> dynamic_var_ordering -e sift
+   vis> restruct_fsm
+
+   In the above case example, the final synthesized circuit is MODEL.ml.blif if
+   the name of the design in foo.blif is MODEL.
+   Command options: 
+
+   -A
+          Allow realignment (during symbolic factorization) of ZDDs after BDD
+          reordering and vice versa. This option is effective when only one of
+          the BDD or ZDD variable reordering is enabled.
+
+   -D <fileHead>
+          Specify the output file name for synthesized circuit. File extension
+          is not necessary. By default, the model name of the circuit is used.
+          For example, -D foobar, will result in foobar.ml.blif
+
+   -d <divMethod>
+          Choose a divisor. See synthesize_network for more details.
+
+   -E
+          Print the number of equivalence classes in the FSM.
+
+   -F <probFile>
+          File with primary input probabilities, one per line. input_name
+          <probability>
+
+   -f <factMethod>
+          Choose a method for factorization. See synthesize_network for more
+          details.
+
+   -h
+          Print command usage.
+
+   -i <string>
+          Specify the prefix to be used to generate names for internal nodes
+          during synthesis. By default, the prefix is "_n".
+
+   -N
+          Expand  the  reachable  set R to include those states which are
+          equivalent to R but not reachable. The default is not to include such
+          states.
+
+   -o <orderFile>
+          File to output BDD variable ordering after the restructured circuit
+          is synthesized.
+
+   -R <value>
+          Allow  reordering  in  BDD and/or ZDD variables during symbolic
+          factorization stage.
+
+          0 : (default) No reordering neither in BDD nor in ZDD.
+
+          1 : Allows reordering only in BDD, not in ZDD.
+
+          2 : Allows reordering only in ZDD, not in BDD.
+
+          3 : Allows reordering both in BDD and in ZDD.
+
+   -s <heuristic>
+          Heuristic to perform restructuring. Consider a fragment of an STG
+          containing states A,B and C and an edge from A to B. Let B and C be
+          equivalent. Since B and C are equivalent, it is possible to change
+          the transition between A and B to A and C. In the more general case,
+          the choice can be driven by different cost constraints. The following
+          are the heuristics:
+          ham  : Hamming distance based heuristic. An edge is chosen that
+          reduces the Hamming distance (or state bit transitions) between the
+          states.
+          fanin  :  Fanin  oriented  heuristic. A representative from the
+          equivalence class is chosen that reduces the total average state bit
+          switching on the incoming edges.
+          faninout : Fanin-Fanout oriented heuristic. A representative from the
+          equivalence class is chosen that reduces the total average state bit
+          switching on the incoming as well as outgoing edges.
+          cproj : A simple C-Projection. A representative from the equivalence
+          class is chosen which is closest to the initial state. The distance
+          d(x,y) is defined as:
+          sum_{i=0}^{N-1}(|x_i - y_i| cdot 2^{N-i-1}).
+
+   -T
+          Try to share more nodes during symbolic factorization. Existing
+          divisors are checked for potential reuse before extracting divisors
+          from the current boolean function.
+
+   -t <seconds>
+          Time in seconds allowed to complete the command. If the computation
+          time goes above that limit, the process is aborted. The default is no
+          limit.
+
+   -v
+          Turn on verbosity.
+
+   See also command : synthesize_network
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

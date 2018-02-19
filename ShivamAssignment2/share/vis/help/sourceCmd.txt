@@ -1,0 +1,72 @@
+
+  source - execute commands from a file
+     _________________________________________________________________
+
+   source [-h] [-p] [-s] [-x] <file> [<args>]
+
+   Reads and executes commands from a file.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -p
+          Print a prompt before reading each command.
+
+   -s
+          Silently ignore an attempt to execute commands from a nonexistent
+          file.
+
+   -x
+          Echo each command before it is executed.
+
+   <file>
+          File name
+
+   Arguments on the command line after the filename are remembered but not
+   evaluated. Commands in the script file can then refer to these arguments
+   using the history substitution mechanism.
+
+   EXAMPLE:
+
+   Contents of test.scr:
+
+  read_blif_mv %:2
+  init_verify
+  simulate -n 10
+  
+
+   Typing  "source test.scr lion.mv" on the command line will execute the
+   sequence
+
+  read_blif_mv lion.mv
+  init_verify
+  simulate -n 10
+  
+
+   (In  this  case  %:0  gets "source", %:1 gets "test.scr", and %:2 gets
+   "lion.mv".)  If  you type "alias st source test.scr" and then type "st
+   lion.blif bozo", you will execute
+
+  read_blif_mv bozo
+  init_verify
+  simulate -n 10
+  
+
+   because "bozo" was the second argument on the last command line typed. In
+   other words, command substitution in a script file depends on how the script
+   file  was  invoked.  Switches  passed to a command are also counted as
+   positional parameters. Therefore, if you type "st -x lion.mv bozo", you will
+   execute
+  read_blif_mv lion.mv
+  init_verify
+  simulate -n 10
+  
+
+   To pass the "-x" switch (or any other switch) to "source" when the script
+   uses positional parameters, you can define an alias. For instance, "alias
+   srcx source -x".
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

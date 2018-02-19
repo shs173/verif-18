@@ -1,0 +1,11 @@
+
+  _init_state_formula - write resettability condition as a CTL formula
+     _________________________________________________________________
+
+   _init_state_formula [-h] [<init_file>]
+
+   Write resettability condition as a CTL formula. Writes to init_file is
+   specified, else stdout.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07

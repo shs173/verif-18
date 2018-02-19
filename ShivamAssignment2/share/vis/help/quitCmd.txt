@@ -1,0 +1,19 @@
+
+  quit - exit VIS
+     _________________________________________________________________
+
+   quit [-h] [-s]
+
+   Stops the program. Does not save the current network before exiting.
+
+   Command options:
+
+   -h
+          Print the command usage.
+
+   -s
+          Free all the memory before quitting. This is slower, and is used for
+          finding memory leaks.
+     _________________________________________________________________
+
+   Last updated on 20120205 22h07
